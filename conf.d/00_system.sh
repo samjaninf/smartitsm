@@ -41,6 +41,28 @@ fi
 
 ## Installs this module.
 function do_install {
+    loginfo "Executing pre-checks..."
+    
+    logdebug "Checking user rights..."
+    local user=`whoami`
+    if [ "$user" -ne "root" ]; then
+        logwarning "You need super user (root) rights."
+        return 1
+    fi
+    
+    logdebug "Checking distribution..."
+    local release=`lsb_release --all 2> /dev/null | grep "Release" | awk '{print $NF}'`
+    if [ "$?" -gt 0 ]; then
+        logwarning "lsb_release is not available or returned with an error."
+        return 1
+    fi
+    if [ "$release" -ne "12.04" ]; then
+        logwarning "Distribution Ubuntu 12.04 LTS is required."
+        return 1
+    fi
+    
+    logdebug "Pre-checks are done."
+    
     loginfo "Upgrading system..."
     upgradeSystem || return 1
     
