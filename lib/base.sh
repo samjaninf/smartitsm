@@ -1,16 +1,41 @@
+#!/bin/bash
+
+
+## smartITSM Demo System
+## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+##
+## Base Library
+##
+
+
 ## Includes shell script.
 ##   #1 Path to file
 function includeShellScript {
-  loginfo "Including shell script..."
-  local file="${LIB_DIR}/$1"
-  if [ ! -r "$file" ]; then
-      logwarning "File '${file}' does not exist or is not readable."
-      logerror "Cannot include shell script."
-      return 1
-    fi
-  source "$cmd_file"
-  logdebug "File '${file}' included."
-  return 0
+#   loginfo "Including shell script..."
+#   local file="$1"
+#   if [ ! -r "$file" ]; then
+#       logwarning "File '${file}' does not exist or is not readable."
+#       logerror "Cannot include shell script."
+#       return 1
+#     fi
+  source "$1"
+#   logdebug "File '${file}' included."
+#   return 0
 }
 
 ## Executes command.
@@ -51,7 +76,7 @@ function log {
 
   let "relevant = (($1 & $LOG_LEVEL))"
   if [ "$relevant" -gt 0 ]; then
-      "$ECHO" "[$level] $2" >> "$LOG_FILE"
+      echo "[$level] $2" >> "$LOG_FILE"
     fi
 
   let "relevant = (($1 & $VERBOSITY))"
@@ -145,33 +170,14 @@ function abort {
   calculateSpentTime
   logdebug "Exit code: $1"
   logfatal "Operation failed."
-  exit $1;
-}
-
-
-## Apply nice level
-function applyNiceLevel {
-  loginfo "Applying nice level..."
-
-  PID="$$"
-  logdebug "Current process ID is '${PID}'."
-
-  exe "$RENICE $NICE_LEVEL $PID"
-  if [ "$?" -gt 0 ]; then
-      logwarning "Re-nice to '${NICE_LEVEL}' failed."
-      logerror "Failed to apply nice level."
-      return 1
-    fi
-
-  logdebug "New nice level is '${NICE_LEVEL}'."
-  return 0
+  exit $1
 }
 
 
 ## Print line to standard output
 ##   $1 string
 function prntLn {
-  "$ECHO" -e "$1" 1>&2
+  echo -e "$1" 1>&2
   return 0
 }
 
@@ -179,7 +185,7 @@ function prntLn {
 ## Print line without trailing new line to standard output
 ##   $1 string
 function prnt {
-  "$ECHO" -e -n "$1" 1>&2
+  echo -e -n "$1" 1>&2
   return 0
 }
 
@@ -187,15 +193,8 @@ function prnt {
 ## Print global usage
 function printUsage {
   loginfo "Printing global usage..."
-
-  local cmd_placeholder="[command]"
-  if [ -n "$COMMAND" -a "$COMMAND" != "help" ]; then
-      cmd_placeholder="$COMMAND"
-      prntLn "$COMMAND_DESC"
-    else
-      prntLn "$PROJECT_SHORT_DESC"
-    fi
-  prntLn "Usage: '$BASE_NAME [output] $cmd_placeholder [options]'"
+    
+  prntLn "Usage: '$BASE_NAME [output] [options]'"
   prntLn ""
   prntLn "Output:"
   prntLn "    -q\t\t\tBe quiet (for scripting)."
@@ -203,25 +202,13 @@ function printUsage {
   prntLn "    -V\t\t\tBe verboser."
   prntLn "    -D\t\t\tBe verbosest (for debugging)."
   prntLn ""
-  if [ -z "$COMMAND" ]; then
-      prntLn "The most commonly used $PROJECT_NAME options are:"
-      prntLn "    build\t\t${COMMAND_BUILD}"
-      prntLn "    create\t\t${COMMAND_CREATE}"
-    else
-      prntLn $"Options:"
-      printCommandOptions
-    fi
+  prntLn "Options:"
+  prntLn "    --install\t\tRun installation."
   prntLn ""
   prntLn "Information:"
   prntLn "    -h, --help\t\tShow this help and exit."
   prntLn "    --license\t\tShow license information and exit."
   prntLn "    --version\t\tShow information about this script and exit."
-  prntLn ""
-  if [ -n "$COMMAND" -a "$COMMAND" != "help" ]; then
-      prntLn "See '$BASE_NAME help ${COMMAND}' for more information on this specific command."
-    else
-      prntLn "See '$BASE_NAME help [command]' for more information on a specific command."
-    fi
 
   logdebug "Usage printed."
   return 0
@@ -232,8 +219,8 @@ function printUsage {
 function printVersion {
   loginfo "Printing some information about this script..."
 
-  prntLn "$PROJECT_NAME $PROJECT_VERSION"
-  prntLn "Copyright (C) 2012 $PROJECT_AUTHOR"
+  prntLn "$PROJECT_SHORT_DESC $PROJECT_VERSION"
+  prntLn "Copyright (C) 2012 $PROJECT_COPYRIGHT"
   prntLn "This program comes with ABSOLUTELY NO WARRANTY."
   prntLn "This is free software, and you are welcome to redistribute it"
   prntLn "under certain conditions. Type '--license' for details."
@@ -249,9 +236,9 @@ function printLicense {
 
   logdebug "Look for license text..."
 
-  licenses[0]="/usr/share/common-licenses/GPL"
-  licenses[1]="/usr/share/doc/licenses/gpl-3.0.txt"
-  licenses[2]="/usr/share/doc/${PROJECT_NAME}/COPYING"
+  licenses[0]="${BASE_DIR}/COPYING"
+  licenses[1]="/usr/share/common-licenses/AGPL-3"
+  licenses[2]="/usr/share/doc/licenses/agpl-3.0.txt"
 
   for i in "${licenses[@]}"; do
       if [ -r "$i" ]; then
@@ -263,6 +250,6 @@ function printLicense {
     done
 
   logwarning "Cannot find any fitting license text on this system."
-  logerror "Failed to print license. But it's the GPL3+."
+  logerror "Failed to print license. But it's the AGPL3+."
   return 1
 }

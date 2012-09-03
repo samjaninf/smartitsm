@@ -1,0 +1,179 @@
+#!/bin/bash
+
+
+## smartITSM Demo System
+## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+##
+## Main Script
+##
+
+
+## Start time
+START=`date +%s`
+
+
+##
+## Includes
+##
+
+## Include default configuration:
+DEFAULT_CONFIGURATION="lib/config.sh"
+if [ ! -r "$DEFAULT_CONFIGURATION" ]; then
+    exit 255
+fi
+source "$DEFAULT_CONFIGURATION"
+
+## Include local configuration:
+LOCAL_CONFIGURATION="etc/config.sh"
+if [ -r "$LOCAL_CONFIGURATION" ]; then
+    source "$LOCAL_CONFIGURATION"
+fi
+
+## Include base library:
+BASE_LIBRARY="${LIB_DIR}/base.sh"
+if [ ! -r "$BASE_LIBRARY" ]; then
+    exit 255
+  fi
+source "$BASE_LIBRARY"
+
+## Include project library:
+PROJECT_LIBRARY="${LIB_DIR}/${PROJECT_NAME}.sh"
+if [ ! -r "$PROJECT_LIBRARY" ]; then
+    exit 255
+  fi
+source "$PROJECT_LIBRARY"
+
+
+##
+## Processing
+##
+
+## Traps
+##   See `man kill` for details.
+## Normal exit
+trap 'exit 0' 0
+## SIGHUB
+trap 'lognotice "Caught SIGHUB, but nothing to do."' 1
+## SIGINT
+trap 'logwarning "Caught SIGINT." ; abort 102' 2
+## SIGQUIT
+trap 'logwarning "Caught SIGQUIT." ; abort 103' 3
+## SIGTERM
+trap 'logwarning "Caught SIGTERM." ; abort 115' 15
+
+
+## Process given options and arguments
+loginfo "Process given options and arguments..."
+ARGS=`getopt \
+-o qvVDh \
+--long help,version,license,install -- "$@" 2> /dev/null`
+
+if [ $? != 0 -o "$#" = 0 ]; then
+    logwarning "Bad request."
+    printUsage
+    abort 1;
+  fi
+
+eval set -- "$ARGS"
+
+logdebug "Processed."
+
+
+## Match options and arguments
+loginfo "Matching options and arguments..."
+
+while true ; do
+    case "$1" in
+    # Output:
+        -q)
+          VERBOSITY=$LOG_NONE
+          logdebug "Set verbosity: $VERBOSITY"
+          shift;;
+        -v)
+          VERBOSITY=$(($LOG_FATAL | $LOG_ERROR | $LOG_WARNING | $LOG_NOTICE))
+          logdebug "Set verbosity: $VERBOSITY"
+          shift;;
+        -V)
+          VERBOSITY=$(($LOG_ALL & ~$LOG_DEBUG))
+          logdebug "Set verbosity: $VERBOSITY"
+          shift;;
+        -D)
+          VERBOSITY=$LOG_ALL;
+          logdebug "Set verbosity: $VERBOSITY"
+          shift;;
+    # Information:
+        -h|--help)
+          logdebug "Set option: Print usage."
+          PRINT_USAGE=1;
+          shift;;
+        --version)
+          logdebug "Set option: Print version."
+          PRINT_VERSION=1;
+          shift;;
+        --license)
+          logdebug "Set option: Print license."
+          PRINT_LICENSE=1;
+          shift;;
+    # Options:
+        --install)
+          logdebug "Set option: Run installation."
+          RUN_INSTALL=1;
+          shift 1;;
+        --)
+          shift;
+          break;;
+        *)
+          lognotice "Unkown option '${1}'."
+          printUsage
+          abort 2;;
+  esac
+done
+
+logdebug "Matched."
+
+
+## Print usage and exit.
+if [ "$PRINT_USAGE" -eq 1 ]; then
+    printUsage
+    finishing
+fi
+
+
+## Print some information about this script and exit.
+if [ "$PRINT_VERSION" -eq 1 ]; then
+    printVersion
+    finishing
+  fi
+
+
+## Print some information about this script and exit.
+if [ "$PRINT_LICENSE" -eq 1 ]; then
+    printLicense
+    finishing
+fi
+
+
+# Installation
+if [ "$RUN_INSTALL" -eq 1 ]; then
+    run_install
+    status="$?"
+    if [ "$status" -gt 0 ]; then
+        abort "$status"
+    fi
+    finishing
+fi

@@ -29,6 +29,8 @@ service ssh restart
 a2enmod rewrite
 echo -e "ServerName demo.smartitsm.org\n" >> /etc/apache2/apache2.conf
 
+##-------------------------------------------------------------------------------------------------------------
+
 ## Icinga, Nagios Plugins, IDOUtils, Icinga Web, PNP4Nagios
 ## <https://wiki.icinga.org/display/howtos/Setting+up+Icinga+with+IDOUtils+on+Ubuntu>
 ## <https://wiki.icinga.org/display/howtos/Setting+up+Icinga+Web+on+Ubuntu>
@@ -68,6 +70,7 @@ joe /usr/local/pnp4nagios/etc/config.php
 # edit commands.cfg as described in howto
 service apache2 restart
 
+##-------------------------------------------------------------------------------------------------------------
 
 ## Perl, CPAN
 perl -e 'for ( @INC ) { print -e $_ ? "Exists:  " : "Missing: ", $_, "\n" }'
