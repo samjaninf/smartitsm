@@ -19,18 +19,13 @@
 
 
 ##
-## Icinga
-##
-## Documentation:
-##   <https://wiki.icinga.org/display/howtos/Setting+up+Icinga+with+IDOUtils+on+Ubuntu>
-##   <https://wiki.icinga.org/display/howtos/Setting+up+Icinga+Web+on+Ubuntu>
-##   <https://wiki.icinga.org/display/howtos/Setting+up+PNP4Nagios+with+Icinga-Web>
+## CPAN
 ##
 
 
-MODULE="icinga"
-TITLE="Icinga"
-DESCRIPTION="Icinga, Nagios Plugins, IDOUtils, Icinga Web, and PNP4Nagios"
+MODULE="cpan"
+TITLE="CPAN"
+DESCRIPTION="Perl and CPAN"
 AUTHOR="Benjamin Heisig <bheisig@i-doit.org>"
 
 

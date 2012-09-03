@@ -26,11 +26,17 @@
 ##   <https://wiki.icinga.org/display/howtos/Setting+up+Icinga+Web+on+Ubuntu>
 ##   <https://wiki.icinga.org/display/howtos/Setting+up+PNP4Nagios+with+Icinga-Web>
 ##
+## Versions:
+##   Icinga 1.7.1
+##   Icinga-Web 1.7.2
+##   IDOUtils 1.7.1
+##   Nagios Plugins 1.4.15
+##   PNP4Nagios 0.6.18
 
 
 MODULE="icinga"
 TITLE="Icinga"
-DESCRIPTION="Icinga, Nagios Plugins, IDOUtils, Icinga Web, and PNP4Nagios"
+DESCRIPTION="Icinga, Icinga Web, IDOUtils, Nagios Plugins, and PNP4Nagios"
 AUTHOR="Benjamin Heisig <bheisig@i-doit.org>"
 
 
