@@ -29,6 +29,15 @@ Each tool is encapsulated in a module. Currently, the demo system supports the f
 
 ##   Usage
 
+First of all, you have to fetch a copy of this repository. You can do this with a git client...
+
+    git clone https://github.com/bheisig/smartitsm.git
+
+...or fetch and extract a distribution tarball...
+
+    wget https://github.com/bheisig/smartitsm/tarball/master -O smartitsm_demo_system.tar.gz
+    tar xzf smartitsm_demo_system.tar.gz
+
 There is a script called `bin/smartitsm.sh` which will do everything for you. Before using edit the local configuration under `etc/config.sh` to meet your preferences.
 
 Furthermore there are several files you should be aware of:
@@ -85,6 +94,11 @@ Removing modules is currently not implemented yet.
 ##  Homepage of the smartITSM Demo System
 
 The demo system has its own homepage which is accessible with any modern web browser in the web root. For example, the default URL is <http://demo.smartitsm.org/>, but is only available if your nameserver is configured properly. Of course, the web server is available under the hosts's IP address, but this may break the interaction between the modules.
+
+
+##  Contribution
+
+Your contribution is appreciated! Please, [read more about it at our website](http://www.smartitsm.org/contribution).
 
 
 ##   Copyright and License
