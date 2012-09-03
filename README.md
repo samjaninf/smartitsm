@@ -14,11 +14,11 @@ _smartITSM_ stands for great open source tools working together to enhance the I
 
 Each tool is encapsulated in a module. Currently, the demo system supports the following tools:
 
-*   i-doit v0.9.9-9 pro
-*   Icinga 1.7.1, Icinga-Web 1.7.2, IDOUtils 1.7.1, Nagios Plugins 1.4.15, PNP4Nagios 0.6.18
-*   OCS Inventory NG 2.0.5, OCS Inventory NG Unix Agent 2.0.5
-*   OTRS Help Desk 3.1.10, ReferenceIDoitObjects 0.4 (closed beta)
-*   Request Tracker (RT) 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects
+*   **i-doit** v0.9.9-9 pro
+*   **Icinga** 1.7.1, Icinga-Web 1.7.2, IDOUtils 1.7.1, Nagios Plugins 1.4.15, PNP4Nagios 0.6.18
+*   **OCS Inventory NG** 2.0.5, OCS Inventory NG Unix Agent 2.0.5
+*   **OTRS Help Desk** 3.1.10, ReferenceIDoitObjects 0.4 (closed beta)
+*   **Request Tracker (RT)** 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects
 
 
 ##  Requirements
@@ -33,21 +33,21 @@ There is a script called `bin/smartitsm.sh` which will do everything for you. Be
 
 Furthermore there are several files you should be aware of:
 
-*   `bin/` -- executables
-    *   `build_icinga_configuration_from_i-doit.sh` -- export Icinga configuration from i-doit and enable it in Icinga itself
-    *   `rt_clean_cache_apache_restart.sh` -- clean restart of Request Tracker (RT)
-    *   `smartitsm.sh` -- main script
-*   `conf.d/` -- module configuration
-    *   `00_system.sh` -- base system
-    *   `20_cpan.sh` -- CPAN
+*   `bin/` – executables
+    *   `build_icinga_configuration_from_i-doit.sh` – export Icinga configuration from i-doit and enable it in Icinga itself
+    *   `rt_clean_cache_apache_restart.sh` – clean restart of Request Tracker (RT)
+    *   `smartitsm.sh` – main script
+*   `conf.d/` – module configuration
+    *   `00_system.sh` – base system
+    *   `20_cpan.sh` – CPAN
     *   […]
-*   `etc/` -- misc files
-    *   `apache.conf` -- Apache httpd configuration file for the homepage of the smartITSM Demo System
-    *   `config.sh` -- local configuration file for `bin/smartitsm.sh`
-*   `lib` -- libraries used by `bin/smartitsm.sh`
-    *   `config.sh` -- default configuration file
+*   `etc/` – misc files
+    *   `apache.conf` – Apache httpd configuration file for the homepage of the smartITSM Demo System
+    *   `config.sh` – local configuration file for `bin/smartitsm.sh`
+*   `lib` – libraries used by `bin/smartitsm.sh`
+    *   `config.sh` – default configuration file
     *   […]
-*   `www` -- files for the smartITSM homepage
+*   `www` – files for the smartITSM homepage
 
 For more help type the following command:
 
@@ -97,7 +97,7 @@ smartITSM and i-doit are Copyright synetics GmbH.
 
 Icinga is a registered Trademark in the US, the EU and Germany.
 
-Nagios is Copyright Nagios Enterprises LLC.
+Nagios is Copyright Nagios Enterprises, LLC.
 
 Open-source Ticket Request System (OTRS) is Copyright OTRS AG.
 
