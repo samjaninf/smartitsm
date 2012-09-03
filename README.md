@@ -18,13 +18,13 @@ Each tool is encapsulated in a module. Currently, the demo system supports the f
 *   Icinga 1.7.1, Icinga-Web 1.7.2, IDOUtils 1.7.1, Nagios Plugins 1.4.15, PNP4Nagios 0.6.18
 *   OCS Inventory NG 2.0.5, OCS Inventory NG Unix Agent 2.0.5
 *   OTRS Help Desk 3.1.10, ReferenceIDoitObjects 0.4 (closed beta)
-*   Request Tracker (RT) 4.0.7, ExternalAuth, LDAPImport, MandatoryFields, ReferenceIDoitObjects
+*   Request Tracker (RT) 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects
 
 
 ##  Requirements
 
 *   Ubuntu 12.04 LTS
-*   super user rights (`root`)
+*   super user (`root`) rights
 
 
 ##   Usage
@@ -63,6 +63,7 @@ Module configuration is done under `conf.d/`. Each module has its own file with 
     mv conf.d/50_icinga.sh conf.d/50_icinga.sh.skip
 
 Each module gets its own item on the homepage of the smartITSM Demo System
+
 
 ### Installation
 
