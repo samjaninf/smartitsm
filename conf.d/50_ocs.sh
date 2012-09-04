@@ -23,15 +23,15 @@
 ## Documentation:
 ##   <http://wiki.ocsinventory-ng.org/index.php/Documentation:Server#Under_Linux_Operating_System.>
 ##   <http://wiki.ocsinventory-ng.org/index.php/Documentation:UnixAgent>
-##
-## Versions:
-##   OCS Inventory NG server 2.0.5
-##   OCS Inventory NG Unix agent 2.0.5
 
 
 MODULE="ocs"
 TITLE="OCS Inventory NG"
-DESCRIPTION="OCS Inventory NG server 2.0.5, OCS Inventory NG Unix agent 2.0.5"
+DESCRIPTION="hardware inventory"
+VERSIONS="OCS Inventory NG 2.0.5, OCS Inventory NG Unix Agent 2.0.5"
+URL="/ocsreports/"
+IT_STACK="http://www.smartitsm.org/it_stack/ocs_inventory_ng"
+PRIORITY="50"
 
 
 ##
@@ -67,8 +67,48 @@ function do_install {
     
     cd "$BASE_DIR" || return 1
     
-    loginfo "Installing logo..."
-    fetchLogo "$MODULE" "http://www.ocsinventory-ng.org/en/assets/components/modxss/images/logo.png"
+    do_www_install || return 1
+    
+    return 0
+}
+
+## Installs homepage.
+function do_www_install {
+    loginfo "Installing homepage configuration..."
+    
+    fetchLogo "http://www.ocsinventory-ng.org/en/assets/components/modxss/images/logo.png"
+    
+    loginfo "Installing "
+    echo "<?php
+
+    \$demos[$MODULE] = array(
+        'title' => '$TITLE',
+        'description' => '$DESCRIPTION',
+        'url' => '$URL',
+        'website' => '$IT_STACK',
+        'versions' => '$VERSIONS',
+        'credentials' => array(
+            'Administrator' => array(
+                'username' => 'admin',
+                'password' => 'admin'
+            )
+        ),
+        'api' => array(
+            'soap' => array(
+                'type' => 'SOAP',
+                'url' => \$protocol . '://' . \$host . '/ocsinterface/',
+                'username' => 'admin',
+                'password' => 'admin'
+            ),
+            'agent' => array(
+                'type' => 'Agent interface',
+                'url' => \$protocol . '://' . \$host . '/ocsinventory/'
+            )
+        )
+    );
+
+?>
+" > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
     
     return 0
 }

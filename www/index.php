@@ -8,105 +8,18 @@
     $title = 'smartITSM Demo System';
     $website = 'http://www.smartitsm.org/';
     
-    $demos = array(
-        'i-doit' => array(
-            'title' => 'i-doit pro (SVN branch)',
-            'description' => 'CMDB and IT documentation',
-            'url' => '/i-doit_svn/',
-            'website' => 'http://www.smartitsm.org/it_stack/i-doit',
-            'logo' => array(
-                'url' => '/demo/i-doit_logo.png',
-                'width' => '184',
-                'height' => '83'
-            ),
-            'credentials' => array(
-                'Administrator' => array(
-                    'username' => 'admin',
-                    'password' => 'admin'
-                )
-            )
-        ),
-        'rt' => array(
-            'title' => 'Request Tracker (RT)',
-            'description' => 'issue tracking system',
-            'url' => '/rt/',
-            'website' => 'http://www.smartitsm.org/it_stack/request_tracker',
-            'logo' => array(
-                'url' => '/demo/best_practical_logo.png',
-                'width' => '177',
-                'height' => '34'
-            ),
-            'credentials' => array(
-                'Administrator' => array(
-                    'username' => 'root',
-                    'password' => 'password'
-                )
-            )
-        ),
-        'otrs' => array(
-            'title' => 'OTRS Help Desk',
-            'description' => 'issue tracking system',
-            'url' => '/otrs/index.pl',
-            'website' => 'http://www.smartitsm.org/it_stack/otrs',
-            'logo' => array(
-                'url' => '/demo/otrs_logo.gif',
-                'width' => '280',
-                'height' => '70'
-            ),
-            'credentials' => array(
-                'Administrator' => array(
-                    'username' => 'root@localhost',
-                    'password' => 'root'
-                )
-            )
-        ),
-        'ocs' => array(
-            'title' => 'OCS Inventory NG',
-            'description' => 'hardware inventory',
-            'url' => '/ocsreports/',
-            'website' => 'http://www.smartitsm.org/it_stack/ocs_inventory_ng',
-            'logo' => array(
-                'url' => '/demo/ocs_inventory_ng_logo.png',
-                'width' => '650',
-                'height' => '112'
-            ),
-            'credentials' => array(
-                'Administrator' => array(
-                    'username' => 'admin',
-                    'password' => 'admin'
-                )
-            ),
-            'api' => array(
-                'soap' => array(
-                    'type' => 'SOAP',
-                    'url' => $protocol . '://' . $host . '/ocsinterface/',
-                    'username' => 'admin',
-                    'password' => 'admin'
-                ),
-                'agent' => array(
-                    'type' => 'Agent interface',
-                    'url' => $protocol . '://' . $host . '/ocsinventory/'
-                )
-            )
-        ),
-        'icinga' => array(
-            'title' => 'Icinga',
-            'description' => 'network monitoring',
-            'url' => '/icinga/',
-            'website' => 'http://www.smartitsm.org/it_stack/icinga',
-            'logo' => array(
-                'url' => '/demo/icinga_logo.png',
-                'width' => '500',
-                'height' => '170'
-            ),
-            'credentials' => array(
-                'Administrator' => array(
-                    'username' => 'icingaadmin',
-                    'password' => 'admin'
-                )
-            )
-        )
-    );
+    global $demos;
+    $demos = array();
+    
+    $moduleDir = new DirectoryIterator('/opt/smartitsm/www/conf.d');
+    
+    foreach ($moduleDir as $fileInfo) {
+        if ($fileInfo->isFile() === false || $fileInfo->getExtension() !== 'php' || $fileInfo->isReadable() === false) {
+            continue;
+        } //if
+        
+        require $fileInfo->getFilename();
+    } //foreach
     
     function printCredentials ($username = null, $password = null) {
         $credentials = '';
@@ -134,8 +47,8 @@
 
 <head>
     <title><?= $title ?></title>
-    <link href="/demo/favicon.png" type="image/png" rel="shortcut icon">
-    <link href="/demo/style.css" type="text/css" rel="stylesheet">
+    <link href="/favicon.png" type="image/png" rel="shortcut icon">
+    <link href="/style.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
@@ -144,7 +57,7 @@
 
 <header>
 
-    <a href="<?= $website ?>"><img src="/demo/header.png" style="height: 134px; weight: 661px;" alt="smartITSM logo" style="" /></a>
+    <a href="<?= $website ?>"><img src="/header.png" style="height: 134px; weight: 661px;" alt="smartITSM logo" style="" /></a>
 
 </header>
 
@@ -158,9 +71,9 @@
 
         <legend><a href="<?= $demo['url'] ?>"><?= $demo['title'] ?></a></legend>
 
-        <a href="<?= $demo['url'] ?>" class="description">
+        <a href="<?= $demo['url'] ?>" class="description" title="<?= $demo['versions'] ?>">
         
-            <img src="<?= $demo['logo']['url'] ?>" alt="<?= $demo['title'] ?> demo installation" />
+            <img src="<?= $demo['logo']['url'] ?>" alt="<?= $demo['title'] ?> logo" />
 
             <p><?= $demo['description'] ?></p>
         
@@ -224,7 +137,7 @@
 
         <legend><a href="<?= $website ?>">smartITSM</a></legend>
 
-        <a href="<?= $website ?>" style="float: left;"><img src="/demo/smartitsm_flower.png" alt="smartITSM flower" style="height: 250px; margin-right: 1em;" />
+        <a href="<?= $website ?>" style="float: left;"><img src="/smartitsm_flower.png" alt="smartITSM flower" style="height: 250px; margin-right: 1em;" />
 
         <p style="text-align: left;"><span class="italic">smartITSM</span> stands for great open source tools working together to enhance the IT service management of an organization.</p>
         
@@ -244,10 +157,10 @@
     
     <ul id="contact">
     
-        <li><a href="http://www.smartitsm.org/_feed/blog:entry" title="Subscribe the blog post as RSS feed."><img src="/demo/rss_32.png" alt="RSS icon" /></a></li>
-        <li><a href="https://twitter.com/opensourceitsm" title="Follow @opensourceitsm on Twitter."><img src="/demo/twitter_32.png" alt="Twitter icon" /></a></li>
-        <li><a href="https://www.youtube.com/user/smartitsm" title="Visit smartITSM on YouTube."><img src="/demo/youtube_32.png" alt="YouTube icon" /></a></li>
-        <li><a href="mailto:mail@smartitsm.org" title="Email to smartITSM."><img src="/demo/email_32.png" alt="YouTube icon" /></a></li>
+        <li><a href="http://www.smartitsm.org/_feed/blog:entry" title="Subscribe the blog post as RSS feed."><img src="/rss_32.png" alt="RSS icon" /></a></li>
+        <li><a href="https://twitter.com/opensourceitsm" title="Follow @opensourceitsm on Twitter."><img src="/twitter_32.png" alt="Twitter icon" /></a></li>
+        <li><a href="https://www.youtube.com/user/smartitsm" title="Visit smartITSM on YouTube."><img src="/youtube_32.png" alt="YouTube icon" /></a></li>
+        <li><a href="mailto:mail@smartitsm.org" title="Email to smartITSM."><img src="/email_32.png" alt="YouTube icon" /></a></li>
     
     </ul>
 

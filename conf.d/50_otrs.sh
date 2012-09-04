@@ -19,15 +19,15 @@
 
 
 ## OTRS
-##
-## Versions:
-##   OTRS Help Desk 3.1.10
-##   RT::Extension::ReferenceIDoitObjects 0.4 (closed beta)
 
 
 MODULE="otrs"
 TITLE="Open-source Ticket Request System (OTRS)"
-DESCRIPTION="OTRS Help Desk 3.1.10, OTRS-Extension-ReferenceIDoitObjects"
+DESCRIPTION="issue tracking system"
+VERSIONS="OTRS Help Desk 3.1.10, ReferenceIDoitObjects 0.4 (closed beta)"
+URL="/otrs/index.pl"
+IT_STACK="http://www.smartitsm.org/it_stack/otrs"
+PRIORITY="50"
 
 
 ##
@@ -75,8 +75,36 @@ function do_install {
     
     cd "$BASE_DIR" || return 1
     
-    loginfo "Installing logo..."
-    fetchLogo "$MODULE" "http://www.otrs.com/fileadmin/templates/skins/skin_otrs/css/images/logo.gif" "gif"
+    do_www_install || return 1
+    
+    return 0
+}
+
+## Installs homepage.
+function do_www_install {
+    loginfo "Installing homepage configuration..."
+    
+    fetchLogo "http://www.otrs.com/fileadmin/templates/skins/skin_otrs/css/images/logo.gif" "gif"
+    
+    loginfo "Installing "
+    echo "<?php
+
+    \$demos[$MODULE] = array(
+        'title' => '$TITLE',
+        'description' => '$DESCRIPTION',
+        'url' => '$URL',
+        'website' => '$IT_STACK',
+        'versions' => '$VERSIONS',
+        'credentials' => array(
+            'Administrator' => array(
+                'username' => 'root@localhost',
+                'password' => 'root'
+            )
+        )
+    );
+
+?>
+" > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
     
     return 0
 }

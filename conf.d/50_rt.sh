@@ -19,19 +19,15 @@
 
 
 ## Request Tracker (RT)
-##
-## Versions:
-##   Request Tracker 4.0.7
-##   RT::Authen::ExternalAuth
-##   RT::Condition::NotStartedInBusinessHours
-##   RT::Extension::LDAPImport
-##   RT::Extension::MandatoryFields
-##   RT::Extension::ReferenceIDoitObjects
 
 
 MODULE="rt"
 TITLE="Request Tracker (RT)"
-DESCRIPTION="Request Tracker, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
+DESCRIPTION="issue tracking system"
+VERSIONS="Request Tracker (RT) 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
+URL="/rt/"
+IT_STACK="http://www.smartitsm.org/it_stack/request_tracker"
+PRIORITY="50"
 
 
 ##
@@ -180,8 +176,36 @@ Set(%MandatoryFields, (
     loginfo "Performing clean restart..."
     "$BIN_DIR/rt_clean_cache_apache_restart.sh" || return 1
     
-    loginfo "Installing logo..."
-    fetchLogo "$MODULE" "http://bestpractical.com/images/bpslogo.png"
+    do_www_install || return 1
+    
+    return 0
+}
+
+## Installs homepage.
+function do_www_install {
+    loginfo "Installing homepage configuration..."
+    
+    fetchLogo "http://bestpractical.com/images/bpslogo.png"
+    
+    loginfo "Installing "
+    echo "<?php
+
+    \$demos[$MODULE] = array(
+        'title' => '$TITLE',
+        'description' => '$DESCRIPTION',
+        'url' => '$URL',
+        'website' => '$IT_STACK',
+        'versions' => '$VERSIONS',
+        'credentials' => array(
+            'System User' => array(
+                'username' => 'root',
+                'password' => 'password'
+            )
+        )
+    );
+
+?>
+" > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
     
     return 0
 }

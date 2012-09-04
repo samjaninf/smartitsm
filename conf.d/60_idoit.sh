@@ -19,14 +19,15 @@
 
 
 ## i-doit
-##
-## Versions:
-##   i-doit v0.9.9-9 pro
 
 
 MODULE="idoit"
-TITLE="i-doit"
-DESCRIPTION="i-doit v0.9.9-9 pro"
+TITLE="i-doit pro"
+DESCRIPTION="CMDB and IT documentation"
+VERSIONS="i-doit v0.9.9-9 pro"
+URL="/i-doit/"
+IT_STACK="http://www.smartitsm.org/it_stack/i-doit"
+PRIORITY="60"
 
 
 ##
@@ -60,8 +61,36 @@ function do_install {
     # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
     # TODO deploy "/var/www/i-doit/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
     
-    loginfo "Installing logo..."
-    fetchLogo "$MODULE" "http://www.smartitsm.org/_media/i-doit/i-doit_logo.png"
+    do_www_install || return 1
+
+    return 0
+}
+
+## Installs homepage.
+function do_www_install {
+    loginfo "Installing homepage configuration..."
+    
+    fetchLogo "http://www.smartitsm.org/_media/i-doit/i-doit_logo.png"
+    
+    loginfo "Installing "
+    echo "<?php
+
+    \$demos[$MODULE] = array(
+        'title' => '$TITLE',
+        'description' => '$DESCRIPTION',
+        'url' => '$URL',
+        'website' => '$IT_STACK',
+        'versions' => '$VERSIONS',
+        'credentials' => array(
+            'Administrator' => array(
+                'username' => 'admin',
+                'password' => 'admin'
+            )
+        )
+    );
+
+?>
+" > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
     
     return 0
 }

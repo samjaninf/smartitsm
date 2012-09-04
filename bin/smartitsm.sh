@@ -81,7 +81,7 @@ trap 'logwarning "Caught SIGTERM." ; abort 115' 15
 loginfo "Process given options and arguments..."
 ARGS=`getopt \
 -o qvVDh \
---long help,version,license,install -- "$@" 2> /dev/null`
+--long help,version,license,install,www-install -- "$@" 2> /dev/null`
 
 if [ $? != 0 -o "$#" = 0 ]; then
     logwarning "Bad request."
@@ -133,6 +133,12 @@ while true ; do
         --install)
           logdebug "Set option: Run installation."
           RUN_INSTALL=1;
+          RUN_WWW_INSTALL=0;
+          shift 1;;
+        --www-install)
+          logdebug "Set option: Run homepage installation."
+          RUN_INSTALL=0;
+          RUN_WWW_INSTALL=1;
           shift 1;;
         --)
           shift;
@@ -177,3 +183,18 @@ if [ "$RUN_INSTALL" -eq 1 ]; then
     fi
     finishing
 fi
+
+
+# Homepage installation
+if [ "$RUN_WWW_INSTALL" -eq 1 ]; then
+    run_www_install
+    status="$?"
+    if [ "$status" -gt 0 ]; then
+        abort "$status"
+    fi
+    finishing
+fi
+
+logwarning "Bad request."
+printUsage
+abort 1;

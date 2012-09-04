@@ -24,18 +24,15 @@
 ##   <https://wiki.icinga.org/display/howtos/Setting+up+Icinga+with+IDOUtils+on+Ubuntu>
 ##   <https://wiki.icinga.org/display/howtos/Setting+up+Icinga+Web+on+Ubuntu>
 ##   <https://wiki.icinga.org/display/howtos/Setting+up+PNP4Nagios+with+Icinga-Web>
-##
-## Versions:
-##   Icinga 1.7.1
-##   Icinga-Web 1.7.2
-##   IDOUtils 1.7.1
-##   Nagios Plugins 1.4.15
-##   PNP4Nagios 0.6.18
 
 
 MODULE="icinga"
 TITLE="Icinga"
-DESCRIPTION="Icinga, Icinga Web, IDOUtils, Nagios Plugins, and PNP4Nagios"
+DESCRIPTION="network monitoring"
+VERSIONS="Icinga 1.7.1, Icinga-Web 1.7.2, IDOUtils 1.7.1, Nagios Plugins 1.4.15, PNP4Nagios 0.6.18"
+URL="/icinga/"
+IT_STACK="http://www.smartitsm.org/it_stack/icinga"
+PRIORITY="50"
 
 
 ##
@@ -120,8 +117,36 @@ define command{
     loginfo "Restarting web server..."
     service apache2 restart || return 1
     
-    loginfo "Installing logo..."
-    fetchLogo "$MODULE" "http://web.demo.icinga.org/icinga-web/images/icinga/icinga-logo-big.png"
+    do_www_install || return 1
+    
+    return 0
+}
+
+## Installs homepage.
+function do_www_install {
+    loginfo "Installing homepage configuration..."
+    
+    fetchLogo "http://web.demo.icinga.org/icinga-web/images/icinga/icinga-logo-big.png"
+    
+    loginfo "Installing "
+    echo "<?php
+
+    \$demos[$MODULE] = array(
+        'title' => '$TITLE',
+        'description' => '$DESCRIPTION',
+        'url' => '$URL',
+        'website' => '$IT_STACK',
+        'versions' => '$VERSIONS',
+        'credentials' => array(
+            'Administrator' => array(
+                'username' => 'icingaadmin',
+                'password' => 'admin'
+            )
+        )
+    );
+
+?>
+" > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
     
     return 0
 }

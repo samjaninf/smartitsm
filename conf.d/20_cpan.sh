@@ -24,6 +24,8 @@
 MODULE="cpan"
 TITLE="CPAN"
 DESCRIPTION="Perl and CPAN"
+VERSIONS="Perl 5.14.2, CPAN"
+PRIORITY="20"
 
 
 ##

@@ -24,6 +24,7 @@
 MODULE="system"
 TITLE="Base System"
 DESCRIPTION="system preparation"
+PRIORITY="00"
 
 
 ##

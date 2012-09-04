@@ -24,6 +24,7 @@
 MODULE="homepage"
 TITLE="Homepage of smartITSM Demo System"
 DESCRIPTION="Each module has its on entry."
+PRIORITY="30"
 
 
 ##
@@ -31,14 +32,25 @@ DESCRIPTION="Each module has its on entry."
 ##
 
 ## Installation directory
-INSTALL_DIR="/opt/smartitsm"
+if [ -z "${INSTALL_DIR+1}" ]; then
+    INSTALL_DIR="/opt/smartitsm"
+fi
 
 ## Logo directory
-LOGO_DIR="${INSTALL_DIR}/logos"
+if [ -z "${LOGO_DIR+1}" ]; then
+    LOGO_DIR="${INSTALL_DIR}/logos"
+fi
 
 
 ## Installs this module.
 function do_install {
+    do_www_install || return 1
+    return 0
+}
+
+
+## Installs homepage.
+function do_www_install {
     loginfo "Installing homepage..."
     mkdir -p "$INSTALL_DIR" || return 1
     cp -r "$WWW_DIR" "$INSTALL_DIR" || return 1

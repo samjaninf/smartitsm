@@ -1,0 +1,115 @@
+body {
+    background-color: #cbcbcb;
+}
+
+div#main {
+    width: 95%;
+    background-color: #ffffff;
+    border: 0.1em solid #333333;
+    border-radius: 0.5em;
+    padding: 1em;
+    text-align: center;
+    margin: 2em auto;
+    color: #333333;
+    font-family: sans-serif;
+    font-size: 0.9em;
+    line-height: 1.5em;
+}
+
+header, footer {
+    background-color: #333333;
+    border-radius: 0.5em;
+    color: #cbcbcb;
+    padding: 0.5em 2em 0.5em 2em;
+    overflow: hidden;
+}
+
+header, footer a {
+    color: #cbcbcb;
+}
+
+footer ul#contact {
+    list-style: none;
+    width: 15%;
+    margin: 0px auto;
+}
+
+footer ul#contact li {
+    float: left;
+    margin-right: 2em;
+}
+
+h1 {
+    margin: 0.5em;
+}
+
+h2 {
+    font-size: 1em;
+    margin: 0;
+    text-align: left;
+    font-weight: normal;
+}
+
+h1 a {
+    color: #333333;
+    text-decoration: none;
+}
+
+section#demos fieldset {
+    position: relative;
+    border: 0.1em solid #333333;
+    border-radius: 0.5em;
+    width: 20em;
+    float: left;
+    margin: 1em 1em 1em 1em;
+    padding: 0.5em 1em 0em 1em;
+    min-height: 27em;
+}
+
+section#demos fieldset legend {
+    background-color: #333333;
+    border-radius: 0.5em;
+    color: #cbcbcb;
+    font-weight: bold;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+}
+
+section#demos fieldset legend a {
+    text-decoration: none;
+    color: #cbcbcb;
+}
+
+section#demos fieldset a {
+    color: #333333;
+}
+
+section#demos fieldset a.description {
+    text-decoration: none;
+}
+
+section#demos fieldset ul {
+    text-align: left;
+    margin: 0;
+}
+
+section#demos fieldset .more {
+    position: absolute;
+    bottom: 0;
+    right: 1em;
+}
+
+section#demos fieldset img {
+    width: 100%;
+}
+
+div.clear {
+    clear: both;
+}
+
+.monospace {
+    font-family: monospace;
+}
+
+.italic {
+    font-style: italic;
+}

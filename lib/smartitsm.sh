@@ -22,7 +22,7 @@
 ## Project Library
 ##
 
-
+## Runs installation.
 function run_install {
     for conf_file in "$CONFIG_DIR"/*.sh; do
         includeShellScript "$conf_file" || abort 1
@@ -38,6 +38,23 @@ function run_install {
     return 0
 }
 
+## Runs homepage installation.
+function run_www_install {
+    for conf_file in "$CONFIG_DIR"/*.sh; do
+        includeShellScript "$conf_file" || abort 1
+        loginfo "Installing module '$TITLE' ($DESCRIPTION)..."
+        do_www_install
+        if [ "$?" -gt 0 ]; then
+            logerror "Installation failed."
+            return 1
+        fi
+        logdebug "Module '$TITLE' installed."
+    done
+    
+    return 0
+}
+
+## Generates password.
 function generatePassword {
     local password=`pwgen -N 1 -s 12`
     local status=$?
@@ -49,6 +66,8 @@ function generatePassword {
     return "$password"
 }
 
+## Installs distribution package(s).
+##   $1 one or more space-separated packages
 function installPackage {
     loginfo "Installing package(s) $1..."
     apt-get install -y $1
@@ -63,6 +82,7 @@ function installPackage {
     return "$status"
 }
 
+## Upgrades all distribution packages.
 function upgradeSystem {
     loginfo "Upgrading system..."
     
@@ -80,12 +100,16 @@ function upgradeSystem {
     return 0
 }
 
+## Downloads a file.
+##   $1 URL
 function download {
     loginfo "Downloading file '$1'..."
     wget --no-clobber "$1" || return 1
     return 0
 }
 
+## Installs one or more CPAN modules.
+##   $1 Space-separated list of modules
 function installCPANmodule {
     loginfo "Installing Perl module from CPAN..."
     cpan -i "$1"
@@ -98,6 +122,8 @@ function installCPANmodule {
     return 0
 }
 
+## Executes a MySQL query.
+##   $1 SQL query
 function executeMySQLQuery {
     loginfo "Executing SQL query with MySQL client..."
     logdebug "SQL query: $1"
@@ -111,6 +137,9 @@ function executeMySQLQuery {
     return 0
 }
 
+## Imports into a MySQL database from file.
+##   $1 Existing database
+##   $2 File with SQL queries
 function executeMySQLImport {
     loginfo "Executing SQL import with MySQL client..."
     logdebug "Database: $1"
@@ -125,36 +154,64 @@ function executeMySQLImport {
     return 0
 }
 
+## Fetches a module logo from web. Optionally converts images to the PNG format.
+##   $1 URL to image
+##   $2 (optional) File extension (if not 'png')
 function fetchLogo {
     loginfo "Fetching module logo..."
-    logdebug "Module: $1"
-    logdebug "URL: $2"
+
+    logdebug "URL: $1"
     
-    local extension="$3"
+    local extension="$2"
     if [ -z "$extension" ]; then
         extension="png"
     fi
     logdebug "File extension: $extension"
     
-    wget "$2" -O "${LOGO_DIR}/${1}_logo.$extension"
+    wget "$1" -O "${LOGO_DIR}/${MODULE}_logo.$extension"
     local status="$?"
     if [ "$status" -gt 0 ]; then
         logwarning "wget returned with an error."
-        logerror "Fetching logo for module '$1' failed."
+        logerror "Fetching logo for module '$MODULE' failed."
         return "$status"
     fi
     
     if [ "$extension" -ne "png" ]; then
         logdebug "Converting logo from $extension to png..."
-        convert "${LOGO_DIR}/${1}_logo.$extension" "${LOGO_DIR}/${1}_logo.png"
+        convert "${LOGO_DIR}/${MODULE}_logo.$extension" "${LOGO_DIR}/${MODULE}_logo.png"
         local status="$?"
-        rm "${LOGO_DIR}/${1}_logo.$extension"
+        rm "${LOGO_DIR}/${MODULE}_logo.$extension"
         if [ "$status" -gt 0 ]; then
             logwarning "convert returned with error."
-            logerror "Fetching logo for module '$1' failed."
+            logerror "Fetching logo for module '$MODULE' failed."
             return "$status"
         fi
     fi
     
+    return 0
+}
+
+## Prints global usage
+function printUsage {
+    loginfo "Printing global usage..."
+
+    prntLn "Usage: '$BASE_NAME [output] [options]'"
+    prntLn ""
+    prntLn "Output:"
+    prntLn "    -q\t\t\tBe quiet (for scripting)."
+    prntLn "    -v\t\t\tBe verbose."
+    prntLn "    -V\t\t\tBe verboser."
+    prntLn "    -D\t\t\tBe verbosest (for debugging)."
+    prntLn ""
+    prntLn "Options:"
+    prntLn "    --install\t\tRun installation."
+    prntLn "    --www-install\t\tRun homepage installation only."
+    prntLn ""
+    prntLn "Information:"
+    prntLn "    -h, --help\t\tShow this help and exit."
+    prntLn "    --license\t\tShow license information and exit."
+    prntLn "    --version\t\tShow information about this script and exit."
+
+    logdebug "Usage printed."
     return 0
 }
