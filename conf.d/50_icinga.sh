@@ -122,7 +122,7 @@ define command{
     return 0
 }
 
-## Installs homepage.
+## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
     

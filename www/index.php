@@ -7,19 +7,23 @@
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http';
     $title = 'smartITSM Demo System';
     $website = 'http://www.smartitsm.org/';
+    $module_dir = '/opt/smartitsm/www/conf.d';
     
     global $demos;
     $demos = array();
     
-    $moduleDir = new DirectoryIterator('/opt/smartitsm/www/conf.d');
-    
-    foreach ($moduleDir as $fileInfo) {
-        if ($fileInfo->isFile() === false || $fileInfo->getExtension() !== 'php' || $fileInfo->isReadable() === false) {
-            continue;
-        } //if
+    // No modules installed?
+    if (is_dir($module_dir) && is_readable($module_dir)) {
+        $moduleDir = new DirectoryIterator($module_dir);
         
-        require $fileInfo->getFilename();
-    } //foreach
+        foreach ($moduleDir as $fileInfo) {
+            if ($fileInfo->isFile() === false || $fileInfo->getExtension() !== 'php' || $fileInfo->isReadable() === false) {
+                continue;
+            } //if
+            
+            require $fileInfo->getFilename();
+        } //foreach
+    } //if
     
     function printCredentials ($username = null, $password = null) {
         $credentials = '';
@@ -73,7 +77,7 @@
 
         <a href="<?= $demo['url'] ?>" class="description" title="<?= $demo['versions'] ?>">
         
-            <img src="<?= $demo['logo']['url'] ?>" alt="<?= $demo['title'] ?> logo" />
+            <img src="/logos/<?= $demo['logo'] ?>" alt="<?= $demo['title'] ?> logo" />
 
             <p><?= $demo['description'] ?></p>
         

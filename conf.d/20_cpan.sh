@@ -75,6 +75,13 @@ function do_install {
     return 0
 }
 
+## Installs homepage configuration.
+function do_www_install {
+    loginfo "Installing homepage configuration..."
+    logdebug "Nothing to do. Skipping."
+    return 0
+}
+
 ## Upgrades this module.
 function do_upgrade {
     lognotice "Not implemented yet. Skipping."

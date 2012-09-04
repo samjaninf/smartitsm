@@ -34,39 +34,49 @@ PRIORITY="60"
 ## Default Configuration
 ##
 
-## TODO
+## Installation directory
+if [ -z "${INSTALL_DIR+1}" ]; then
+    INSTALL_DIR="/opt/$MODULE"
+fi
 
 
 ## Installs this module.
 function do_install {
     loginfo "Installing i-doit..."
-    # FIXME fetch and extract distribution to /var/www/i-doit
-    mkdir /var/www/i-doit/icingaexport
-    chown www-data:www-data -R /var/www/i-doit/
+    # FIXME fetch and extract distribution to installation dir.
+    mkdir -p "$INSTALL_DIR"/icingaexport || return 1
+    chown www-data:www-data -R "$INSTALL_DIR"/
     # TODO installation script
     # TODO configure i-doit's Nagios module, add nagios user (with group Admin)
-    /var/www/i-doit/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org
-    ln -s /var/www/i-doit/icingaexport/objects/commands.cfg /etc/icinga/objects/i-doit_commands.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/contacts.cfg /etc/icinga/objects/i-doit_contacts.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/hostdependencies.cfg /etc/icinga/objects/i-doit_hostdependencies.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/hostescalations.cfg /etc/icinga/objects/i-doit_hostescalations.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/hostgroups.cfg /etc/icinga/objects/i-doit_hostgroups.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/hosts.cfg /etc/icinga/objects/i-doit_hosts.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/servicedependencies.cfg /etc/icinga/objects/i-doit_servicedependencies.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/serviceescalations.cfg /etc/icinga/objects/i-doit_serviceescalations.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/servicegroups.cfg /etc/icinga/objects/i-doit_servicegroups.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/services.cfg /etc/icinga/objects/i-doit_services.cfg
-    ln -s /var/www/i-doit/icingaexport/objects/timeperiods.cfg /etc/icinga/objects/i-doit_timeperiods.cfg
-    #ln -s /var/www/i-doit/icingaexport/nagios.cfg /etc/icinga/icinga.cfg
-    # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
-    # TODO deploy "/var/www/i-doit/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
+
+    loginfo "Installing Apache httpd configuration..."
+    cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
+    
+    if [ -d "/etc/icinga" ]; then
+        loginfo "Creating symbolic links of Icinga export files..."
+        "$INSTALL_DIR"/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org
+        ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg /etc/icinga/objects/i-doit_commands.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg /etc/icinga/objects/i-doit_contacts.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostdependencies.cfg /etc/icinga/objects/i-doit_hostdependencies.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostescalations.cfg /etc/icinga/objects/i-doit_hostescalations.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostgroups.cfg /etc/icinga/objects/i-doit_hostgroups.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hosts.cfg /etc/icinga/objects/i-doit_hosts.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/servicedependencies.cfg /etc/icinga/objects/i-doit_servicedependencies.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/serviceescalations.cfg /etc/icinga/objects/i-doit_serviceescalations.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/servicegroups.cfg /etc/icinga/objects/i-doit_servicegroups.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/services.cfg /etc/icinga/objects/i-doit_services.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/timeperiods.cfg /etc/icinga/objects/i-doit_timeperiods.cfg
+        #ln -s "$INSTALL_DIR"/icingaexport/nagios.cfg /etc/icinga/icinga.cfg
+        # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
+        # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
+    fi
     
     do_www_install || return 1
 
     return 0
 }
 
-## Installs homepage.
+## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
     

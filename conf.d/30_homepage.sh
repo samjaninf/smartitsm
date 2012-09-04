@@ -38,7 +38,7 @@ fi
 
 ## Logo directory
 if [ -z "${LOGO_DIR+1}" ]; then
-    LOGO_DIR="${INSTALL_DIR}/logos"
+    LOGO_DIR="${INSTALL_DIR}/www/logos"
 fi
 
 
@@ -48,10 +48,9 @@ function do_install {
     return 0
 }
 
-
-## Installs homepage.
+## Installs homepage configuration.
 function do_www_install {
-    loginfo "Installing homepage..."
+    loginfo "Installing homepage configuration..."
     mkdir -p "$INSTALL_DIR" || return 1
     cp -r "$WWW_DIR" "$INSTALL_DIR" || return 1
     mkdir -p "${LOGO_DIR}" || return 1
