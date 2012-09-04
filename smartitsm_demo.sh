@@ -18,36 +18,6 @@ perl Makefile.PL
 make
 make install
 
-## OTRS, ReferenceIDoitObjects
-wget http://ftp.otrs.org/pub/otrs/otrs-3.1.10.tar.bz2
-tar xjf otrs-3.1.10.tar.bz2
-mv otrs-3.1.9/ /opt/otrs/
-perl /opt/otrs/bin/otrs.CheckModules.pl
-useradd -d /opt/otrs/ -c 'OTRS user' otrs
-usermod -aG www-data otrs
-cp /opt/otrs/Kernel/Config.pm.dist /opt/otrs/Kernel/Config.pm
-cp /opt/otrs/Kernel/Config/GenericAgent.pm.dist /opt/otrs/Kernel/Config/GenericAgent.pm
-perl -cw /opt/otrs/bin/cgi-bin/index.pl
-perl -cw /opt/otrs/bin/cgi-bin/customer.pl
-perl -cw /opt/otrs/bin/otrs.PostMaster.pl
-/opt/otrs/bin/otrs.SetPermissions.pl --otrs-user=otrs --web-user=www-data --otrs-group=www-data --web-group=www-data /opt/otrs
-ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf.d/otrs.config
-service apache2 restart
-mysql -u root -p -e 'create database otrs charset utf8'
-mysql -u root -p otrs < /opt/otrs/scripts/database/otrs-schema.mysql.sql
-mysql -u root -p otrs < /opt/otrs/scripts/database/otrs-initial_insert.mysql.sql
-mysql -u root -p otrs < /opt/otrs/scripts/database/otrs-schema-post.mysql.sql
-mysql -u root -p -e 'GRANT ALL PRIVILEGES ON otrs.* TO otrs@localhost IDENTIFIED BY "otrs" WITH GRANT OPTION;'
-mysql -u root -p -e 'FLUSH PRIVILEGES;'
-# update config file:
-joe /opt/otrs/Kernel/Config.pm
-/opt/otrs/bin/otrs.CheckDB.pl
-# get OTRS-Extension-ReferenceIDoitObjects-0.4.tar.gz
-tar xzf OTRS-Extension-ReferenceIDoitObjects-0.4.tar.gz
-/opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.4/ReferenceIDoitObjects-0.4.opm
-service apache2 restart
-# TODO configure extension
-
 
 ## i-doit
 svn co http://dev.synetics.de/svn/idoit/branches/idoit-pro /var/www/i-doit_svn

@@ -101,6 +101,17 @@ The demo system has its own homepage which is accessible with any modern web bro
 Your contribution is appreciated! Please, [read more about it at our website](http://www.smartitsm.org/contribution).
 
 
+##  ToDo
+
+...a.k.a. Roadmap
+
+*   upgrade routines
+*   remove routines
+*   support for other GNU/Linux distributions
+*   save state for better resuming
+*   auto-create credentials and save them
+
+
 ##   Copyright and License
 
 Copyright (C) 2012 [synetics GmbH](http://www.i-doit.com/)
