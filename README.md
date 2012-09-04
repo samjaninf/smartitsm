@@ -9,6 +9,8 @@ _smartITSM_ stands for great open source tools working together to enhance the I
 *   Git repository: <https://github.com/bheisig/smartitsm.git>
 *   Issue tracker: <https://github.com/bheisig/smartitsm/issues>
 
+**CAUTION: This is pre-alpha software which may break your system! Test it only in non-productive environments!**
+
 
 ##  Modules
 
