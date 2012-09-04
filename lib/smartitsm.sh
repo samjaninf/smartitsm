@@ -127,7 +127,7 @@ function installCPANmodule {
 function executeMySQLQuery {
     loginfo "Executing SQL query with MySQL client..."
     logdebug "SQL query: $1"
-    mysql -u root -p -e "$1"
+    mysql -u "$MYSQL_USERNAME" -p "$MYSQL_PASSWORD" -e "$1"
     local status="$?"
     if [ "$status" -gt 0 ]; then
         logwarning "MySQL client returned with error."
@@ -144,7 +144,7 @@ function executeMySQLImport {
     loginfo "Executing SQL import with MySQL client..."
     logdebug "Database: $1"
     logdebug "SQL file: $2"
-    mysql -u root -p otrs "$1" < "$2"
+    mysql -u "$MYSQL_USERNAME" -p "$MYSQL_PASSWORD" "$1" < "$2"
     local status="$?"
     if [ "$status" -gt 0 ]; then
         logwarning "MySQL client returned with error."

@@ -113,6 +113,7 @@ Your contribution is appreciated! Please, [read more about it at our website](ht
 *   save state for better resuming
 *   auto-create credentials and save them
 *   apply log level to almost every used command
+*   remove unnecessary user rights from MySQL
 
 
 ##   Copyright and License

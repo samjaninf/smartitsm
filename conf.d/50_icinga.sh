@@ -57,14 +57,14 @@ function do_install {
     service icinga restart || return 1
     
     loginfo "Installing Icinga-Web..."
-    mysql -u root -p -e "CREATE DATABASE icinga_web;" || return 1
-    mysql -u root -p -e "GRANT USAGE ON *.* TO 'icinga_web'@'localhost' IDENTIFIED BY 'icinga_web' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;" || return 1
-    mysql -u root -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON icinga_web.* TO 'icinga_web'@'localhost';" || return 1
+    executeMySQLQuery "CREATE DATABASE icinga_web;" || return 1
+    executeMySQLQuery "GRANT USAGE ON *.* TO 'icinga_web'@'localhost' IDENTIFIED BY 'icinga_web' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0;" || return 1
+    executeMySQLQuery "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, INDEX ON icinga_web.* TO 'icinga_web'@'localhost';" || return 1
     cd "$TMP_DIR" || return 1
     download "http://downloads.sourceforge.net/project/icinga/icinga-web/1.7.2/icinga-web-1.7.2.tar.gz" || return 1
     tar xzf icinga-web-1.7.2.tar.gz || return 1
     cd icinga-web-1.7.2/ || return 1
-    mysql -u root -p icinga_web < etc/schema/mysql.sql || return 1
+    executeMySQLImport "icinga_web" "etc/schema/mysql.sql" || return 1
     ./configure --with-api-cmd-file=/var/lib/icinga/rw/icinga.cmd --with-conf-dir=/etc/icinga-web --with-log-dir=/var/log/icinga-web --with-cache-dir=/var/cache/icinga-web || return 1
     make install || return 1
     make install-apache-config || return 1

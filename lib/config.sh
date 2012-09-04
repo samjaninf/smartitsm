@@ -33,6 +33,16 @@ if [ -z "${HOST+1}" ]; then
     HOST="demo.smartitsm.org"
 fi
 
+## MySQL super user
+if [ -z "${MYSQL_USERNAME+1}" ]; then
+    MYSQL_USERNAME="root"
+fi
+
+## MySQL super user's password
+if [ -z "${MYSQL_PASSWORD+1}" ]; then
+    MYSQL_PASSWORD="root"
+fi
+
 
 ##
 ## About this tool
