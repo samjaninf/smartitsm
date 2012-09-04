@@ -26,7 +26,7 @@
 function run_install {
     for conf_file in "$CONFIG_DIR"/*.sh; do
         includeShellScript "$conf_file" || abort 1
-        loginfo "Installing module '$TITLE' ($DESCRIPTION) by $AUTHOR..."
+        loginfo "Installing module '$TITLE' ($DESCRIPTION)..."
         do_install
         if [ "$?" -gt 0 ]; then
             logerror "Installation failed."

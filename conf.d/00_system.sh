@@ -26,7 +26,6 @@
 MODULE="system"
 TITLE="Base System"
 DESCRIPTION="system preparation"
-AUTHOR="Benjamin Heisig <bheisig@i-doit.org>"
 
 
 ##

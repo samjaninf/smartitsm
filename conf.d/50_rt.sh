@@ -33,7 +33,6 @@
 MODULE="rt"
 TITLE="Request Tracker (RT)"
 DESCRIPTION="Request Tracker, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
-AUTHOR="Benjamin Heisig <bheisig@i-doit.org>"
 
 
 ##

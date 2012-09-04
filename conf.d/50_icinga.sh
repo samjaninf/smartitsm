@@ -37,7 +37,6 @@
 MODULE="icinga"
 TITLE="Icinga"
 DESCRIPTION="Icinga, Icinga Web, IDOUtils, Nagios Plugins, and PNP4Nagios"
-AUTHOR="Benjamin Heisig <bheisig@i-doit.org>"
 
 
 ##

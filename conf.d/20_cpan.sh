@@ -26,7 +26,6 @@
 MODULE="cpan"
 TITLE="CPAN"
 DESCRIPTION="Perl and CPAN"
-AUTHOR="Benjamin Heisig <bheisig@i-doit.org>"
 
 
 ##
