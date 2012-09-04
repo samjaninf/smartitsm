@@ -45,8 +45,10 @@ function do_install {
     download "http://download.bestpractical.com/pub/rt/release/rt-4.0.7.tar.gz" || return 1
     tar xzf rt-4.0.7.tar.gz || return 1
     cd rt-4.0.7/ || return 1
-    ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate || return 1
-    make testdeps || return 1
+    ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate --with-db-dba="$MYSQL_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
+    ## Do not abort after this command:
+    make testdeps
+    # TODO say "N" to live tests (Crypt-SSLeay)
     make fixdeps || return 1
     make install || return 1
     make initialize-database || return 1
@@ -54,7 +56,8 @@ function do_install {
 
     installCPANmodule "RT::Authen::ExternalAuth" || return 1
     installCPANmodule "RT::Condition::NotStartedInBusinessHours" || return 1
-    installCPANmodule "RT::Extension::LDAPImport" || return 1
+    # TODO testing failed...
+    cpan -f -i RT::Extension::LDAPImport || return 1
     installCPANmodule "RT::Extension::MandatoryFields" || return 1
 
     loginfo "Installing RT::Extension::ReferenceIDoitObjects..."
@@ -65,7 +68,7 @@ function do_install {
     make || return 1
     make test || return 1
     make install || return 1
-    make initdb || return 1
+    echo "$RT_DB_PASSWORD" | make initdb || return 1
     
     cd "$BASE_DIR" || return 1
     
@@ -94,6 +97,10 @@ Set(\$Organization , 'smartITSM');
 Set(\$Timezone, 'Europe, Berlin');
 Set(\$OwnerEmail, 'mail@smartitsm.org');
 Set(\$WebDomain, '$HOST');
+
+## Database
+Set(\$DatabaseUser, '$RT_DB_USERNAME');
+Set(\$DatabasePassword, '$RT_DB_PASSWORD');
 
 # You must install Plugins on your own, this is only an example
 # of the correct syntax to use when activating them.

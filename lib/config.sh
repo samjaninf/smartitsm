@@ -33,14 +33,34 @@ if [ -z "${HOST+1}" ]; then
     HOST="demo.smartitsm.org"
 fi
 
-## MySQL super user
-if [ -z "${MYSQL_USERNAME+1}" ]; then
-    MYSQL_USERNAME="root"
+## MySQL database administrator
+if [ -z "${MYSQL_DBA_USERNAME+1}" ]; then
+    MYSQL_DBA_USERNAME="root"
 fi
 
-## MySQL super user's password
-if [ -z "${MYSQL_PASSWORD+1}" ]; then
-    MYSQL_PASSWORD="root"
+## MySQL database administrator's password
+if [ -z "${MYSQL_DBA_PASSWORD+1}" ]; then
+    MYSQL_DBA_PASSWORD="root"
+fi
+
+## RT system user
+if [ -z "${RT_SYSTEM_USERNAME+1}" ]; then
+    RT_SYSTEM_USERNAME="root"
+fi
+
+## RT super user's password
+if [ -z "${RT_SYSTEM_PASSWORD+1}" ]; then
+    RT_SYSTEM_PASSWORD="password"
+fi
+
+## RT DB user
+if [ -z "${RT_DB_USERNAME+1}" ]; then
+    RT_DB_USERNAME="rt_user"
+fi
+
+## MySQL DB user's password
+if [ -z "${RT_DB_PASSWORD+1}" ]; then
+    RT_DB_PASSWORD="rt_pass"
 fi
 
 
