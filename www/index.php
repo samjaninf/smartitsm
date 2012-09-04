@@ -132,7 +132,7 @@
         <ul>
             <li><a href="/phpinfo.php">phpinfo</a></li>
             <li><a href="/phpldapadmin">phpLDAPAdmin</a> (Credentials: <span class="monospace">cn=admin,dc=demo,dc=smartitsm,dc=org:admin</span>)</li>
-            <li><a href="/phpmyadmin">phpMyAdmin (Credentials: <span class="monospace">root:root</span>)</a></li>
+            <li><a href="/phpmyadmin">phpMyAdmin</a> (Credentials: <span class="monospace">root:root</span>)</li>
         </ul>
 
     </fieldset>
@@ -141,13 +141,13 @@
 
         <legend><a href="<?= $website ?>">smartITSM</a></legend>
 
-        <a href="<?= $website ?>" style="float: left;"><img src="/smartitsm_flower.png" alt="smartITSM flower" style="height: 250px; margin-right: 1em;" />
+        <a href="<?= $website ?>" style="float: left;" class="description"><img src="/smartitsm_flower.png" alt="smartITSM flower" style="height: 250px; margin-right: 1em;" />
 
         <p style="text-align: left;"><span class="italic">smartITSM</span> stands for great open source tools working together to enhance the IT service management of an organization.</p>
         
         </a>
 
-        <p class="more" styke="clear: both;"><a href="<?= $website ?>">Read more&hellip;</a></p>
+        <p class="more" style="clear: both;"><a href="<?= $website ?>">Read more&hellip;</a></p>
 
     </fieldset>
 
