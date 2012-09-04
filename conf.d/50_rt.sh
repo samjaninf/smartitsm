@@ -57,7 +57,7 @@ function do_install {
     installCPANmodule "RT::Extension::LDAPImport" || return 1
     installCPANmodule "RT::Extension::MandatoryFields" || return 1
 
-    loginfo "Installing RT::Extension::MandatoryFields..."
+    loginfo "Installing RT::Extension::ReferenceIDoitObjects..."
     download "http://search.cpan.org/CPAN/authors/id/B/BH/BHEISIG/RT-Extension-ReferenceIDoitObjects-0.9.tar.gz" || return 1
     tar xzf RT-Extension-ReferenceIDoitObjects-0.9.tar.gz || return 1
     cd RT-Extension-ReferenceIDoitObjects-0.9/ || return 1
@@ -187,7 +187,7 @@ function do_www_install {
     
     fetchLogo "http://bestpractical.com/images/bpslogo.png"
     
-    loginfo "Installing "
+    loginfo "Installing module configuration..."
     echo "<?php
 
     \$demos[$MODULE] = array(

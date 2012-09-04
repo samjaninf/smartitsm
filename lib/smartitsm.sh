@@ -176,7 +176,7 @@ function fetchLogo {
         return "$status"
     fi
     
-    if [ "$extension" -ne "png" ]; then
+    if [ "$extension" != "png" ]; then
         logdebug "Converting logo from $extension to png..."
         convert "${LOGO_DIR}/${MODULE}_logo.$extension" "${LOGO_DIR}/${MODULE}_logo.png"
         local status="$?"

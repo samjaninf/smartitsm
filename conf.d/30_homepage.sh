@@ -41,6 +41,11 @@ if [ -z "${LOGO_DIR+1}" ]; then
     LOGO_DIR="${INSTALL_DIR}/www/logos"
 fi
 
+## Path to www files:
+if [ -z "${WWW_MODULE_DIR+1}" ]; then
+    WWW_MODULE_DIR="${INSTALL_DIR+1}/www/conf.d"
+fi
+
 
 ## Installs this module.
 function do_install {
@@ -53,8 +58,9 @@ function do_www_install {
     loginfo "Installing homepage configuration..."
     mkdir -p "$INSTALL_DIR" || return 1
     cp -r "$WWW_DIR" "$INSTALL_DIR" || return 1
-    mkdir -p "${LOGO_DIR}" || return 1
-    cp "$ETC_DIR"/apache.conf /etc/apache/conf.d/smartitsm.conf || return 1
+    mkdir -p "$LOGO_DIR" || return 1
+    mkdir -p "$WWW_MODULE_DIR" || return 1
+    cp "$ETC_DIR"/apache.conf /etc/apache2/conf.d/smartitsm.conf || return 1
     service apache2 restart || return 1
     return 0
 }

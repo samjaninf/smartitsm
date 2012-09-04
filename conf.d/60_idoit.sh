@@ -45,7 +45,7 @@ function do_install {
     loginfo "Installing i-doit..."
     # FIXME fetch and extract distribution to installation dir.
     mkdir -p "$INSTALL_DIR"/icingaexport || return 1
-    chown www-data:www-data -R "$INSTALL_DIR"/
+    chown www-data:www-data -R "$INSTALL_DIR"/ || return 1
     # TODO installation script
     # TODO configure i-doit's Nagios module, add nagios user (with group Admin)
 
@@ -54,18 +54,18 @@ function do_install {
     
     if [ -d "/etc/icinga" ]; then
         loginfo "Creating symbolic links of Icinga export files..."
-        "$INSTALL_DIR"/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org
-        ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg /etc/icinga/objects/i-doit_commands.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg /etc/icinga/objects/i-doit_contacts.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostdependencies.cfg /etc/icinga/objects/i-doit_hostdependencies.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostescalations.cfg /etc/icinga/objects/i-doit_hostescalations.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostgroups.cfg /etc/icinga/objects/i-doit_hostgroups.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hosts.cfg /etc/icinga/objects/i-doit_hosts.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/servicedependencies.cfg /etc/icinga/objects/i-doit_servicedependencies.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/serviceescalations.cfg /etc/icinga/objects/i-doit_serviceescalations.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/servicegroups.cfg /etc/icinga/objects/i-doit_servicegroups.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/services.cfg /etc/icinga/objects/i-doit_services.cfg
-        ln -s "$INSTALL_DIR"/icingaexport/objects/timeperiods.cfg /etc/icinga/objects/i-doit_timeperiods.cfg
+        "$INSTALL_DIR"/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg /etc/icinga/objects/i-doit_commands.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg /etc/icinga/objects/i-doit_contacts.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostdependencies.cfg /etc/icinga/objects/i-doit_hostdependencies.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostescalations.cfg /etc/icinga/objects/i-doit_hostescalations.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostgroups.cfg /etc/icinga/objects/i-doit_hostgroups.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hosts.cfg /etc/icinga/objects/i-doit_hosts.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/servicedependencies.cfg /etc/icinga/objects/i-doit_servicedependencies.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/serviceescalations.cfg /etc/icinga/objects/i-doit_serviceescalations.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/servicegroups.cfg /etc/icinga/objects/i-doit_servicegroups.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/services.cfg /etc/icinga/objects/i-doit_services.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/timeperiods.cfg /etc/icinga/objects/i-doit_timeperiods.cfg || return 1
         #ln -s "$INSTALL_DIR"/icingaexport/nagios.cfg /etc/icinga/icinga.cfg
         # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
         # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
@@ -82,7 +82,7 @@ function do_www_install {
     
     fetchLogo "http://www.smartitsm.org/_media/i-doit/i-doit_logo.png"
     
-    loginfo "Installing "
+    loginfo "Installing module configuration..."
     echo "<?php
 
     \$demos[$MODULE] = array(

@@ -43,7 +43,7 @@ function do_install {
     
     logdebug "Checking user rights..."
     local user=`whoami`
-    if [ "$user" -ne "root" ]; then
+    if [ "$user" != "root" ]; then
         logwarning "You need super user (root) rights."
         return 1
     fi
@@ -54,7 +54,7 @@ function do_install {
         logwarning "lsb_release is not available or returned with an error."
         return 1
     fi
-    if [ "$release" -ne "12.04" ]; then
+    if [ "$release" != "12.04" ]; then
         logwarning "Distribution Ubuntu 12.04 LTS is required."
         return 1
     fi

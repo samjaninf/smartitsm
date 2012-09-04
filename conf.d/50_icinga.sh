@@ -128,7 +128,7 @@ function do_www_install {
     
     fetchLogo "http://web.demo.icinga.org/icinga-web/images/icinga/icinga-logo-big.png"
     
-    loginfo "Installing "
+    loginfo "Installing module configuration..."
     echo "<?php
 
     \$demos[$MODULE] = array(

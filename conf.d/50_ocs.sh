@@ -78,7 +78,7 @@ function do_www_install {
     
     fetchLogo "http://www.ocsinventory-ng.org/en/assets/components/modxss/images/logo.png"
     
-    loginfo "Installing "
+    loginfo "Installing module configuration..."
     echo "<?php
 
     \$demos[$MODULE] = array(

@@ -86,7 +86,7 @@ function do_www_install {
     
     fetchLogo "http://www.otrs.com/fileadmin/templates/skins/skin_otrs/css/images/logo.gif" "gif"
     
-    loginfo "Installing "
+    loginfo "Installing module configuration..."
     echo "<?php
 
     \$demos[$MODULE] = array(

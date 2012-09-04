@@ -80,11 +80,6 @@ if [ -z "${WWW_DIR+1}" ]; then
     WWW_DIR="${BASE_DIR}/www"
 fi
 
-## Path to www files:
-if [ -z "${WWW_MODULE_DIR+1}" ]; then
-    WWW_MODULE_DIR="${WWW_DIR}/conf.d"
-fi
-
 ## Path to temporary files:
 if [ -z "${TMP_DIR+1}" ]; then
     TMP_DIR="/tmp"
