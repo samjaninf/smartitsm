@@ -40,7 +40,7 @@ First of all, you have to fetch a copy of this repository. You can do this with 
     wget https://github.com/bheisig/smartitsm/tarball/master -O smartitsm_demo_system.tar.gz
     tar xzf smartitsm_demo_system.tar.gz
 
-There is a script called `bin/smartitsm.sh` which will do everything for you. Before using edit the local configuration under `etc/config.sh` to meet your preferences.
+There is a script called `bin/smartitsm.sh` which will do everything for you. Before using [edit the local configuration](#configuration) under `etc/config.sh` to meet your preferences.
 
 Furthermore there are several files you should be aware of:
 
