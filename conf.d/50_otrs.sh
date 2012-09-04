@@ -75,6 +75,9 @@ function do_install {
     
     cd "$BASE_DIR" || return 1
     
+    loginfo "Installing logo..."
+    fetchLogo "$MODULE" "http://www.otrs.com/fileadmin/templates/skins/skin_otrs/css/images/logo.gif" "gif"
+    
     return 0
 }
 

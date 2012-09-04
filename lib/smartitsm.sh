@@ -106,7 +106,7 @@ function executeMySQLQuery {
     if [ "$status" -gt 0 ]; then
         logwarning "MySQL client returned with error."
         logerror "Executing SQL query with MySQL client failed."
-        return 1
+        return "$status"
     fi
     return 0
 }
@@ -120,7 +120,41 @@ function executeMySQLImport {
     if [ "$status" -gt 0 ]; then
         logwarning "MySQL client returned with error."
         logerror "Executing SQL import with MySQL client failed."
-        return 1
+        return "$status"
     fi
+    return 0
+}
+
+function fetchLogo {
+    loginfo "Fetching module logo..."
+    logdebug "Module: $1"
+    logdebug "URL: $2"
+    
+    local extension="$3"
+    if [ -z "$extension" ]; then
+        extension="png"
+    fi
+    logdebug "File extension: $extension"
+    
+    wget "$2" -O "${LOGO_DIR}/${1}_logo.$extension"
+    local status="$?"
+    if [ "$status" -gt 0 ]; then
+        logwarning "wget returned with an error."
+        logerror "Fetching logo for module '$1' failed."
+        return "$status"
+    fi
+    
+    if [ "$extension" -ne "png" ]; then
+        logdebug "Converting logo from $extension to png..."
+        convert "${LOGO_DIR}/${1}_logo.$extension" "${LOGO_DIR}/${1}_logo.png"
+        local status="$?"
+        rm "${LOGO_DIR}/${1}_logo.$extension"
+        if [ "$status" -gt 0 ]; then
+            logwarning "convert returned with error."
+            logerror "Fetching logo for module '$1' failed."
+            return "$status"
+        fi
+    fi
+    
     return 0
 }

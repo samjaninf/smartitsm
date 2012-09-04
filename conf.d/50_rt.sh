@@ -180,6 +180,9 @@ Set(%MandatoryFields, (
     loginfo "Performing clean restart..."
     "$BIN_DIR/rt_clean_cache_apache_restart.sh" || return 1
     
+    loginfo "Installing logo..."
+    fetchLogo "$MODULE" "http://bestpractical.com/images/bpslogo.png"
+    
     return 0
 }
 

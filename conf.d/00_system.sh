@@ -64,7 +64,7 @@ function do_install {
     upgradeSystem || return 1
     
     loginfo "Installing packages..."
-    installPackage "joe htop make python-software-properties rcconf pwgen unzip subversion git pandoc apache2 libapache2-mod-perl2 php5 php5-cli php5-curl php5-gd php5-imagick php5-ldap php5-mcrypt php5-mysql php5-pgsql php5-suhosin php5-xcache php5-xdebug php-pear php5-xmlrpc php5-xsl mysql-server mysql-client libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool" || return 1
+    installPackage "joe htop make python-software-properties rcconf pwgen unzip subversion git pandoc imagemagick apache2 libapache2-mod-perl2 php5 php5-cli php5-curl php5-gd php5-imagick php5-ldap php5-mcrypt php5-mysql php5-pgsql php5-suhosin php5-xcache php5-xdebug php-pear php5-xmlrpc php5-xsl mysql-server mysql-client libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool" || return 1
 
     loginfo "Installing NTP deamon..."
     apt-get autoremove --purge -y ntpdate || return 1

@@ -120,6 +120,9 @@ define command{
     loginfo "Restarting web server..."
     service apache2 restart || return 1
     
+    loginfo "Installing logo..."
+    fetchLogo "$MODULE" "http://web.demo.icinga.org/icinga-web/images/icinga/icinga-logo-big.png"
+    
     return 0
 }
 

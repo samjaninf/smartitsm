@@ -67,6 +67,9 @@ function do_install {
     
     cd "$BASE_DIR" || return 1
     
+    loginfo "Installing logo..."
+    fetchLogo "$MODULE" "http://www.ocsinventory-ng.org/en/assets/components/modxss/images/logo.png"
+    
     return 0
 }
 

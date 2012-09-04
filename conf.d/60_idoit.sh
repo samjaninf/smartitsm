@@ -60,6 +60,9 @@ function do_install {
     # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
     # TODO deploy "/var/www/i-doit/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
     
+    loginfo "Installing logo..."
+    fetchLogo "$MODULE" "http://www.smartitsm.org/_media/i-doit/i-doit_logo.png"
+    
     return 0
 }
 
