@@ -1,24 +1,3 @@
-## OCS Inventory NG server
-## <http://wiki.ocsinventory-ng.org/index.php/Documentation:Server#Under_Linux_Operating_System.>
-wget https://launchpad.net/ocsinventory-server/stable-2.0/2.0.5/+download/OCSNG_UNIX_SERVER-2.0.5.tar.gz
-tar xzf OCSNG_UNIX_SERVER-2.0.5.tar.gz
-cd OCSNG_UNIX_SERVER-2.0.5/
-sh setup.sh
-rm /usr/share/ocsinventory-reports/ocsreports/install.php
-# check Apache httpd config 
-joe /etc/apache2/conf.d/ocsinventory-server.conf
-service apache2 restart
-
-## Local OCS Inventory NG Agent
-## <http://wiki.ocsinventory-ng.org/index.php/Documentation:UnixAgent>
-wget https://launchpad.net/ocsinventory-unix-agent/stable-2.0/2.0.5/+download/Ocsinventory-Unix-Agent-2.0.5.tar.gz
-tar xzf Ocsinventory-Unix-Agent-2.0.5.tar.gz
-cd Ocsinventory-Unix-Agent-2.0.5/
-perl Makefile.PL
-make
-make install
-
-
 ## i-doit
 svn co http://dev.synetics.de/svn/idoit/branches/idoit-pro /var/www/i-doit_svn
 mkdir /var/www/i-doit_svn/icingaexport
