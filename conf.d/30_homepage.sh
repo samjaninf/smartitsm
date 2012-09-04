@@ -43,7 +43,7 @@ fi
 
 ## Path to www files:
 if [ -z "${WWW_MODULE_DIR+1}" ]; then
-    WWW_MODULE_DIR="${INSTALL_DIR+1}/www/conf.d"
+    WWW_MODULE_DIR="${INSTALL_DIR}/www/conf.d"
 fi
 
 

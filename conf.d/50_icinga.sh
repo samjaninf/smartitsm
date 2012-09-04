@@ -131,7 +131,7 @@ function do_www_install {
     loginfo "Installing module configuration..."
     echo "<?php
 
-    \$demos[$MODULE] = array(
+    \$demos['$MODULE'] = array(
         'title' => '$TITLE',
         'description' => '$DESCRIPTION',
         'url' => '$URL',

@@ -21,7 +21,7 @@
                 continue;
             } //if
             
-            require $fileInfo->getFilename();
+            require $fileInfo->getPathname();
         } //foreach
     } //if
     
@@ -69,7 +69,7 @@
 
 <section id="demos">
 
-    <?php foreach ($demos as $demo) { ?>
+    <?php foreach ($demos as $module => $demo) { ?>
 
     <fieldset>
 
@@ -77,7 +77,7 @@
 
         <a href="<?= $demo['url'] ?>" class="description" title="<?= $demo['versions'] ?>">
         
-            <img src="/logos/<?= $demo['logo'] ?>" alt="<?= $demo['title'] ?> logo" />
+            <img src="/logos/<?= $module ?>_logo.png" alt="<?= $demo['title'] ?> logo" />
 
             <p><?= $demo['description'] ?></p>
         
@@ -141,7 +141,7 @@
 
         <legend><a href="<?= $website ?>">smartITSM</a></legend>
 
-        <a href="<?= $website ?>" style="float: left;" class="description"><img src="/smartitsm_flower.png" alt="smartITSM flower" style="height: 250px; margin-right: 1em;" />
+        <a href="<?= $website ?>" class="description"><img src="/smartitsm_flower.png" alt="smartITSM flower" style="height: 250px; width: auto; margin-right: 1em; float: left;" />
 
         <p style="text-align: left;"><span class="italic">smartITSM</span> stands for great open source tools working together to enhance the IT service management of an organization.</p>
         
