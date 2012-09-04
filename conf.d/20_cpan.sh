@@ -42,6 +42,7 @@ function do_install {
     mkdir -p /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/local/lib/site_perl
     {
         echo "o conf build_requires_install_policy yes"
+        echo "o conf prerequisites_policy follow"
         echo "o conf commit"
         echo "exit"
     } | cpan
@@ -57,8 +58,8 @@ function do_install {
     installCPANmodule "Apache::DBI" || return 1
     installCPANmodule "Net::IP" || return 1
     installCPANmodule "SOAP::Lite" || return 1
-    installCPANmodule "DBD::mysql" || return 1
     installCPANmodule "Encode::HanExtra" || return 1
+    # TODO skip extended test (IMAP server required):
     installCPANmodule "Mail::IMAPClient" || return 1
     installCPANmodule "Net::DNS" || return 1
     installCPANmodule "Net::SMTP::TLS::ButMaintained" || return 1
@@ -66,10 +67,13 @@ function do_install {
     installCPANmodule "Text::CSV_XS" || return 1
     installCPANmodule "LWP::UserAgent" || return 1
     installCPANmodule "Digest::MD5" || return 1
+    # TODO skip external tests (network connectivity required):
     installCPANmodule "Net::SSLeay" || return 1
     installCPANmodule "Proc::Daemon" || return 1
     installCPANmodule "Proc::PID::File" || return 1
+    # TODO say "y" to all questions:
     installCPANmodule "Nmap::Parser" || return 1
+    # TODO say "y" to all questions:
     installCPANmodule "Module::Install" || return 1
     
     return 0
