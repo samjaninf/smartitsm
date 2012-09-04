@@ -27,16 +27,6 @@ DESCRIPTION="system preparation"
 PRIORITY="00"
 
 
-##
-## Default Configuration
-##
-
-## Hostname:
-if [ -z "${HOSTNAME+1}" ]; then
-    HOSTNAME="demo.smartitsm.org"
-fi
-
-
 ## Installs this module.
 function do_install {
     loginfo "Executing pre-checks..."
@@ -77,21 +67,21 @@ function do_install {
     loginfo "Installing OpenLDAP and phpLDAPAdmin..."
     installPackage "slapd ldap-utils phpldapadmin" || return 1
     
-    if [ -z "$HOSTNAME" ]; then
+    if [ -z "$HOST" ]; then
         logwarning "Hostname is not given."
         return 1
     fi
 
     loginfo "Appending hostname to /etc/hosts..."
-    echo -e "127.0.0.1\t$HOSTNAME\n" >> /etc/hosts || return 1
+    echo -e "\n127.0.0.1\t$HOST\n" >> /etc/hosts || return 1
     
     loginfo "Renaming hostname in /etc/hostname..."
-    echo -e "$HOSTNAME" >> /etc/hostname || return 1
+    echo -e "$HOST\n" > /etc/hostname || return 1
 
     ## Apache httpd
     loginfo "Tweaking Apache httpd configuration..."
     a2enmod rewrite || return 1
-    echo -e "ServerName $HOSTNAME\n" >> /etc/apache2/apache2.conf || return 1
+    echo -e "\nServerName $HOST\n" >> /etc/apache2/apache2.conf || return 1
     
     return 0
 }

@@ -112,6 +112,7 @@ Your contribution is appreciated! Please, [read more about it at our website](ht
 *   support for other GNU/Linux distributions
 *   save state for better resuming
 *   auto-create credentials and save them
+*   apply log level to almost every used command
 
 
 ##   Copyright and License

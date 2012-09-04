@@ -25,6 +25,16 @@
 
 
 ##
+## Common settings
+##
+
+## Hostname:
+if [ -z "${HOST+1}" ]; then
+    HOST="demo.smartitsm.org"
+fi
+
+
+##
 ## About this tool
 ##
 

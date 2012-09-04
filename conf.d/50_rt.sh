@@ -88,12 +88,12 @@ function do_install {
 #
 # You must restart your webserver after making changes to this file.
 
-Set(\$rtname, '$HOSTNAME');
+Set(\$rtname, '$HOST');
 Set(\$WebPath, '/rt');
 Set(\$Organization , 'smartITSM');
 Set(\$Timezone, 'Europe, Berlin');
 Set(\$OwnerEmail, 'mail@smartitsm.org');
-Set(\$WebDomain, '$HOSTNAME');
+Set(\$WebDomain, '$HOST');
 
 # You must install Plugins on your own, this is only an example
 # of the correct syntax to use when activating them.
