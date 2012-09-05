@@ -30,14 +30,14 @@ PRIORITY="00"
 ## Installs this module.
 function do_install {
     loginfo "Executing pre-checks..."
-    
+
     logdebug "Checking user rights..."
     local user=`whoami`
     if [ "$user" != "root" ]; then
         logwarning "You need super user (root) rights."
         return 1
     fi
-    
+
     logdebug "Checking distribution..."
     local release=`lsb_release --all 2> /dev/null | grep "Release" | awk '{print $NF}'`
     if [ "$?" -gt 0 ]; then
@@ -48,7 +48,7 @@ function do_install {
         logwarning "Distribution Ubuntu 12.04 LTS is required."
         return 1
     fi
-    
+
     logdebug "Pre-checks are done."
     
     loginfo "Upgrading system..."
@@ -57,6 +57,29 @@ function do_install {
     loginfo "Installing packages..."
     # TODO Use automatically MySQL DBA credentials to configure mysql-server package:
     installPackage "joe htop make python-software-properties rcconf pwgen unzip subversion git pandoc imagemagick apache2 libapache2-mod-perl2 php5 php5-cli php5-curl php5-gd php5-imagick php5-ldap php5-mcrypt php5-mysql php5-pgsql php5-suhosin php5-xcache php5-xdebug php-pear php5-xmlrpc php5-xsl mysql-server mysql-client libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool" || return 1
+    
+    loginfo "Tweaking MySQL server configuration..."
+    echo "[mysqld]
+key_buffer_size=64M
+table_open_cache=1024
+sort_buffer_size=4M
+read_buffer_size=1M
+" > /etc/mysql/conf.d/smartitsm.cnf || return 1
+    service mysql restart || return 1
+    
+    loginfo "Tweaking PHP configuration for Apache httpd..."
+    echo "max_execution_time = 300
+max_input_time = 60
+memory_limit = 1024M
+error_reporting = E_ALL & ~E_DEPRECATED
+display_errors = Off
+log_errors = On
+html_errors = Off
+post_max_size = 128M
+upload_max_filesize = 128M
+session.gc_maxlifetime = 86400
+" > /etc/php5/apache2/conf.d/smartitsm.ini || return 1
+    service apache2 restart || return 1
 
     loginfo "Installing NTP deamon..."
     apt-get autoremove --purge -y ntpdate || return 1
@@ -68,6 +91,12 @@ function do_install {
     # TODO Use automatically MySQL DBA user's password.
     # TODO Leave field empty for phpMyAdmin user.
     installPackage "phpmyadmin" || return 1
+    echo -e "
+\$cfg['MaxTableList'] = 1024;
+\$cfg['SuhosinDisableWarning'] = true;
+\$cfg['LoginCookieValidity'] = 86400;
+\$cfg['LoginCookieStore'] = 86400;
+" >>
 
     loginfo "Installing OpenLDAP and phpLDAPAdmin..."
     # TODO Set automatically LDAP admin password:
