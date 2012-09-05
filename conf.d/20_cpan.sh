@@ -28,13 +28,6 @@ VERSIONS="Perl 5.14.2, CPAN"
 PRIORITY="20"
 
 
-##
-## Default Configuration
-##
-
-## TODO
-
-
 ## Installs this module.
 function do_install {
     loginfo "Preparing CPAN..."

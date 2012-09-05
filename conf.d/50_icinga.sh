@@ -35,13 +35,6 @@ IT_STACK="http://www.smartitsm.org/it_stack/icinga"
 PRIORITY="50"
 
 
-##
-## Default Configuration
-##
-
-## TODO
-
-
 ## Installs this module.
 function do_install {
     loginfo "Installing packages..."

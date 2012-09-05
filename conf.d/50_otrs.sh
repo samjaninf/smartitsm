@@ -30,13 +30,6 @@ IT_STACK="http://www.smartitsm.org/it_stack/otrs"
 PRIORITY="50"
 
 
-##
-## Default Configuration
-##
-
-## TODO
-
-
 ## Installs this module.
 function do_install {
     cd "$TMP_DIR" || return 1

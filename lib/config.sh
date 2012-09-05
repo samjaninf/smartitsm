@@ -33,16 +33,6 @@ if [ -z "${HOST+1}" ]; then
     HOST="demo.smartitsm.org"
 fi
 
-## Logo directory
-if [ -z "${LOGO_DIR+1}" ]; then
-    LOGO_DIR="${INSTALL_DIR}/www/logos"
-fi
-
-## Path to www files:
-if [ -z "${WWW_MODULE_DIR+1}" ]; then
-    WWW_MODULE_DIR="${INSTALL_DIR}/www/conf.d"
-fi
-
 ## MySQL database administrator:
 if [ -z "${MYSQL_DBA_USERNAME+1}" ]; then
     MYSQL_DBA_USERNAME="root"
@@ -143,6 +133,21 @@ fi
 ## Path to temporary files:
 if [ -z "${TMP_DIR+1}" ]; then
     TMP_DIR="/tmp"
+fi
+
+## Installation directory:
+if [ -z "${SMARTITSM_ROOT_DIR+1}" ]; then
+    SMARTITSM_ROOT_DIR="/opt/smartitsm"
+fi
+
+## Logo directory:
+if [ -z "${LOGO_DIR+1}" ]; then
+    LOGO_DIR="${SMARTITSM_ROOT_DIR}/www/logos"
+fi
+
+## Path to www files:
+if [ -z "${WWW_MODULE_DIR+1}" ]; then
+    WWW_MODULE_DIR="${SMARTITSM_ROOT_DIR}/www/conf.d"
 fi
 
 

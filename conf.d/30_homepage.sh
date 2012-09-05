@@ -27,16 +27,6 @@ DESCRIPTION="Each module has its on entry."
 PRIORITY="30"
 
 
-##
-## Default Configuration
-##
-
-## Installation directory
-if [ -z "${INSTALL_DIR+1}" ]; then
-    INSTALL_DIR="/opt/smartitsm"
-fi
-
-
 ## Installs this module.
 function do_install {
     do_www_install || return 1
@@ -46,8 +36,8 @@ function do_install {
 ## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
-    mkdir -p "$INSTALL_DIR" || return 1
-    cp -r "$WWW_DIR" "$INSTALL_DIR" || return 1
+    mkdir -p "$SMARTITSM_ROOT_DIR" || return 1
+    cp -r "$WWW_DIR" "$SMARTITSM_ROOT_DIR" || return 1
     mkdir -p "$LOGO_DIR" || return 1
     mkdir -p "$WWW_MODULE_DIR" || return 1
     cp "$ETC_DIR"/apache.conf /etc/apache2/conf.d/smartitsm.conf || return 1
