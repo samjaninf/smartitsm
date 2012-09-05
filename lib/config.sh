@@ -43,14 +43,24 @@ if [ -z "${MYSQL_DBA_PASSWORD+1}" ]; then
     MYSQL_DBA_PASSWORD="root"
 fi
 
-## RT system user:
-if [ -z "${RT_SYSTEM_USERNAME+1}" ]; then
-    RT_SYSTEM_USERNAME="root"
+## LDAP admin's password:
+if [ -z "${LDAP_ADMIN_USERNAME+1}" ]; then
+    LDAP_ADMIN_USERNAME="cn=admin,dc=demo,dc=smartitsm,dc=org"
 fi
 
-## RT super user's password:
-if [ -z "${RT_SYSTEM_PASSWORD+1}" ]; then
-    RT_SYSTEM_PASSWORD="password"
+## LDAP admin's password:
+if [ -z "${LDAP_ADMIN_PASSWORD+1}" ]; then
+    LDAP_ADMIN_PASSWORD="admin"
+fi
+
+## Icinga admin user:
+if [ -z "${ICINGA_ADMIN_USERNAME+1}" ]; then
+    ICINGA_ADMIN_USERNAME="icingaadmin"
+fi
+
+## Icinga admin user's password:
+if [ -z "${ICINGA_ADMIN_PASSWORD+1}" ]; then
+    ICINGA_ADMIN_PASSWORD="admin"
 fi
 
 ## RT DB user:
@@ -61,16 +71,6 @@ fi
 ## MySQL DB user's password:
 if [ -z "${RT_DB_PASSWORD+1}" ]; then
     RT_DB_PASSWORD="rt_pass"
-fi
-
-## LDAP admin's password:
-if [ -z "${LDAP_ADMIN_USERNAME+1}" ]; then
-    LDAP_ADMIN_USERNAME="cn=admin,dc=demo,dc=smartitsm,dc=org"
-fi
-
-## LDAP admin's password:
-if [ -z "${LDAP_ADMIN_PASSWORD+1}" ]; then
-    LDAP_ADMIN_PASSWORD="admin"
 fi
 
 

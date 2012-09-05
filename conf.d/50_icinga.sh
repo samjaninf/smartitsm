@@ -38,8 +38,10 @@ PRIORITY="50"
 ## Installs this module.
 function do_install {
     loginfo "Installing packages..."
+    # TODO Press enter to continue:
     add-apt-repository ppa:formorer/icinga || return 1
     apt-get update || return 1
+    # TODO Handle several package configuration settings...
     installPackage "icinga icinga-idoutils icinga-doc libdbd-mysql" || return 1
     
     loginfo "Activating IDOUtils..."
@@ -62,6 +64,7 @@ function do_install {
     make install || return 1
     make install-apache-config || return 1
     cd "$BASE_DIR" || return 1
+    service apache2 reload || return 1
     
     loginfo "Installing PNP4Nagios..."
     cd "$TMP_DIR" || return 1
