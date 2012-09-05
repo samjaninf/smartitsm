@@ -63,6 +63,21 @@ if [ -z "${ICINGA_ADMIN_PASSWORD+1}" ]; then
     ICINGA_ADMIN_PASSWORD="admin"
 fi
 
+## OCS database name
+if [ -z "${OCS_DB_NAME+1}" ]; then
+    OCS_DB_NAME="ocsweb"
+fi
+
+## OCS database user
+if [ -z "${OCS_DB_USERNAME+1}" ]; then
+    OCS_DB_USERNAME="ocs"
+fi
+
+## OCS database user's password
+if [ -z "${OCS_DB_PASSWORD+1}" ]; then
+    OCS_DB_PASSWORD="ocs"
+fi
+
 ## RT DB user:
 if [ -z "${RT_DB_USERNAME+1}" ]; then
     RT_DB_USERNAME="rt_user"

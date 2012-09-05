@@ -50,6 +50,12 @@ function do_install {
     fi
 
     logdebug "Pre-checks are done."
+
+    loginfo "Appending hostname to /etc/hosts..."
+    echo -e "\n127.0.0.1\t$HOST\n" >> /etc/hosts || return 1
+    
+    loginfo "Renaming hostname in /etc/hostname..."
+    echo -e "$HOST\n" > /etc/hostname || return 1
     
     loginfo "Upgrading system..."
     upgradeSystem || return 1
@@ -101,17 +107,6 @@ session.gc_maxlifetime = 86400
     loginfo "Installing OpenLDAP and phpLDAPAdmin..."
     # TODO Set automatically LDAP admin password:
     installPackage "slapd ldap-utils phpldapadmin" || return 1
-    
-    if [ -z "$HOST" ]; then
-        logwarning "Hostname is not given."
-        return 1
-    fi
-
-    loginfo "Appending hostname to /etc/hosts..."
-    echo -e "\n127.0.0.1\t$HOST\n" >> /etc/hosts || return 1
-    
-    loginfo "Renaming hostname in /etc/hostname..."
-    echo -e "$HOST\n" > /etc/hostname || return 1
 
     ## Apache httpd
     loginfo "Tweaking Apache httpd configuration..."

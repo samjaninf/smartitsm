@@ -42,11 +42,54 @@ function do_install {
     wget https://launchpad.net/ocsinventory-server/stable-2.0/2.0.5/+download/OCSNG_UNIX_SERVER-2.0.5.tar.gz || return 1
     tar xzf OCSNG_UNIX_SERVER-2.0.5.tar.gz || return 1
     cd OCSNG_UNIX_SERVER-2.0.5/ || return 1
-    sh setup.sh || return 1
+    {
+        # Do you wish to continue ([y]/n)?
+        echo "y"
+        # Which host is running database server [localhost] ?
+        echo "localhost"
+        # On which port is running database server [3306] ?
+        echo "3306"
+        # Where is Apache daemon binary [/usr/sbin/apache2] ?
+        echo "/usr/sbin/apache2"
+        # Where is Apache main configuration file [/etc/apache2/apache2.conf] ?
+        echo "/etc/apache2/apache2.conf"
+        # Which user account is running Apache web server [www-data] ?
+        echo "www-data"
+        # Which user group is running Apache web server [www-data] ?
+        echo "www-data"
+        # Where is Apache Include configuration directory [/etc/apache2/conf.d/] ?
+        echo "/etc/apache2/conf.d/"
+        # Where is PERL Intrepreter binary [/usr/bin/perl] ?
+        echo "/usr/bin/perl"
+        # Do you wish to setup Communication server on this computer ([y]/n)?
+        echo "y"
+        # Where to put Communication server log directory [/var/log/ocsinventory-server] ?
+        echo "/var/log/ocsinventory-server"
+        # Do you allow Setup renaming Communication Server Apache configuration file to 'z-ocsinventory-server.conf' ([y]/n) ?
+        echo "n"
+        # Do you wish to setup Administration Server (Web Administration Console) on this computer ([y]/n)?
+        echo "y"
+        # Do you wish to continue ([y]/n)?
+        echo "y"
+        # Where to copy Administration Server static files for PHP Web Console [/usr/share/ocsinventory-reports] ?
+        echo "/usr/share/ocsinventory-reports"
+        # Where to create writable/cache directories for deployement packages, administration console logs, IPDiscover [/var/lib/ocsinventory-reports] ?
+        echo "/var/lib/ocsinventory-reports"
+    } | sh setup.sh || return 1
+    logdebug "Setting up database..."
+    executeMySQLQuery "CREATE DATABASE $OCS_DB_NAME;" || return 1
+    executeMySQLQuery "CREATE USER '$OCS_DB_USERNAME'@'localhost' IDENTIFIED BY '$OCS_DB_PASSWORD';" || return 1
+    executeMySQLQuery "GRANT ALL ON $OCS_DB_NAME.* TO '$OCS_DB_USERNAME'@'localhost';" || return 1
+    executeMySQLQuery "FLUSH PRIVILEGES;" || return 1
+    executeMySQLImport "$OCS_DB_NAME" "ocsreports/files/ocsbase_new.sql"
+    logdebug "Removing install.php..."
     rm /usr/share/ocsinventory-reports/ocsreports/install.php || return 1
-    # FIXME check Apache httpd config 
-    #joe /etc/apache2/conf.d/ocsinventory-server.conf
-    #joe /etc/apache2/conf.d/ocsinventory-reports.conf
+    # TODO There seems to be a bug while restarting Apache httpd:
+    # "ocsinventory-server: Can't load SOAP::Transport::HTTP* - Web service will be unavailable"
+    # see: <http://forums.ocsinventory-ng.org/viewtopic.php?id=9102>
+    # Workaround:
+    mv /etc/apache2/conf.d/ocsinventory-server.conf /etc/apache2/conf.d/ocsinventory-server.conf.bak || return 1
+    cat /etc/apache2/conf.d/ocsinventory-server.conf.bak | grep -v "Apache::Ocsinventory::SOAP" > /etc/apache2/conf.d/ocsinventory-server.conf || return 1
     cd ..
     service apache2 restart || return 1
 
@@ -56,7 +99,36 @@ function do_install {
     cd Ocsinventory-Unix-Agent-2.0.5/ || return 1
     perl Makefile.PL || return 1
     make || return 1
-    make install || return 1
+    {
+        # Do you want to configure the agent
+        echo "y"
+        # Where do you want to write the configuration file?
+        echo "2" # /etc/ocsinventory-agent
+        # Do you want to create the directory /etc/ocsinventory-agent?
+        echo "y"
+        # What is the address of your ocs server?
+        echo "$HOST"
+        # Do you need credential for the server? (You probably don't)
+        echo "n"
+        # Do you want to apply an administrative tag on this machine
+        echo "y"
+        # tag?
+        echo "demo"
+        # Do yo want to install the cron task in /etc/cron.d
+        echo "y"
+        # Where do you want the agent to store its files? (You probably don't need to change it)?
+        echo "/var/lib/ocsinventory-agent"
+        # Do you want to create the /var/lib/ocsinventory-agent directory?
+        echo "y"
+        # Should I remove the old linux_agent
+        echo "y"
+        # Do you want to use OCS-Inventory software deployment feature?
+        echo "y"
+        # Do you want to use OCS-Inventory SNMP scans feature?
+        echo "y"
+        # Do you want to send an inventory of this machine?
+        echo "y"
+    } | make install || return 1
     
     cd "$BASE_DIR" || return 1
     
