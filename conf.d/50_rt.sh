@@ -51,7 +51,7 @@ function do_install {
     # TODO say "N" to live tests (Crypt-SSLeay)
     make fixdeps || return 1
     make install || return 1
-    make initialize-database || return 1
+    echo "$MYSQL_DBA_PASSWORD" | make initialize-database || return 1
     cd .. || return 1
 
     installCPANmodule "RT::Authen::ExternalAuth" || return 1

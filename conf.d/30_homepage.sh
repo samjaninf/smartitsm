@@ -36,16 +36,6 @@ if [ -z "${INSTALL_DIR+1}" ]; then
     INSTALL_DIR="/opt/smartitsm"
 fi
 
-## Logo directory
-if [ -z "${LOGO_DIR+1}" ]; then
-    LOGO_DIR="${INSTALL_DIR}/www/logos"
-fi
-
-## Path to www files:
-if [ -z "${WWW_MODULE_DIR+1}" ]; then
-    WWW_MODULE_DIR="${INSTALL_DIR}/www/conf.d"
-fi
-
 
 ## Installs this module.
 function do_install {

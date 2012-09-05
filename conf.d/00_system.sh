@@ -55,16 +55,22 @@ function do_install {
     upgradeSystem || return 1
     
     loginfo "Installing packages..."
+    # TODO Use automatically MySQL DBA credentials to configure mysql-server package:
     installPackage "joe htop make python-software-properties rcconf pwgen unzip subversion git pandoc imagemagick apache2 libapache2-mod-perl2 php5 php5-cli php5-curl php5-gd php5-imagick php5-ldap php5-mcrypt php5-mysql php5-pgsql php5-suhosin php5-xcache php5-xdebug php-pear php5-xmlrpc php5-xsl mysql-server mysql-client libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool" || return 1
 
     loginfo "Installing NTP deamon..."
     apt-get autoremove --purge -y ntpdate || return 1
     installPackage "ntp" || return 1
 
-    loginfo "Installing phpMyAdmin (after MySQL server has started)..."
+    loginfo "Installing phpMyAdmin (after MySQL server has been started)..."
+    # TODO Use automatically apache2 as prefered webserver.
+    # TODO Say "Yes" to run dbconfig-common.
+    # TODO Use automatically MySQL DBA user's password.
+    # TODO Leave field empty for phpMyAdmin user.
     installPackage "phpmyadmin" || return 1
 
     loginfo "Installing OpenLDAP and phpLDAPAdmin..."
+    # TODO Set automatically LDAP admin password:
     installPackage "slapd ldap-utils phpldapadmin" || return 1
     
     if [ -z "$HOST" ]; then

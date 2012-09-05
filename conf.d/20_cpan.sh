@@ -46,7 +46,8 @@ function do_install {
         echo "o conf commit"
         echo "exit"
     } | cpan
-    
+
+    # TODO "Somewhere" is a prompt for "Press <enter> to see the detailed list." and "Do you want to proceed with this configuration? [yes]" -- just enter:
     installCPANmodule "CPAN" || return 1
     installCPANmodule "YAML" || return 1
     installCPANmodule "GD::Text" || return 1
@@ -59,7 +60,6 @@ function do_install {
     installCPANmodule "Net::IP" || return 1
     installCPANmodule "SOAP::Lite" || return 1
     installCPANmodule "Encode::HanExtra" || return 1
-    # TODO skip extended test (IMAP server required):
     installCPANmodule "Mail::IMAPClient" || return 1
     installCPANmodule "Net::DNS" || return 1
     installCPANmodule "Net::SMTP::TLS::ButMaintained" || return 1
@@ -71,11 +71,12 @@ function do_install {
     installCPANmodule "Net::SSLeay" || return 1
     installCPANmodule "Proc::Daemon" || return 1
     installCPANmodule "Proc::PID::File" || return 1
-    # TODO say "y" to all questions:
+    # TODO say "y" to all questions (5 times):
     installCPANmodule "Nmap::Parser" || return 1
+    installCPANmodule "JSON::XS" || return 1
     # TODO say "y" to all questions:
     installCPANmodule "Module::Install" || return 1
-    
+
     return 0
 }
 

@@ -33,34 +33,54 @@ if [ -z "${HOST+1}" ]; then
     HOST="demo.smartitsm.org"
 fi
 
-## MySQL database administrator
+## Logo directory
+if [ -z "${LOGO_DIR+1}" ]; then
+    LOGO_DIR="${INSTALL_DIR}/www/logos"
+fi
+
+## Path to www files:
+if [ -z "${WWW_MODULE_DIR+1}" ]; then
+    WWW_MODULE_DIR="${INSTALL_DIR}/www/conf.d"
+fi
+
+## MySQL database administrator:
 if [ -z "${MYSQL_DBA_USERNAME+1}" ]; then
     MYSQL_DBA_USERNAME="root"
 fi
 
-## MySQL database administrator's password
+## MySQL database administrator's password:
 if [ -z "${MYSQL_DBA_PASSWORD+1}" ]; then
     MYSQL_DBA_PASSWORD="root"
 fi
 
-## RT system user
+## RT system user:
 if [ -z "${RT_SYSTEM_USERNAME+1}" ]; then
     RT_SYSTEM_USERNAME="root"
 fi
 
-## RT super user's password
+## RT super user's password:
 if [ -z "${RT_SYSTEM_PASSWORD+1}" ]; then
     RT_SYSTEM_PASSWORD="password"
 fi
 
-## RT DB user
+## RT DB user:
 if [ -z "${RT_DB_USERNAME+1}" ]; then
     RT_DB_USERNAME="rt_user"
 fi
 
-## MySQL DB user's password
+## MySQL DB user's password:
 if [ -z "${RT_DB_PASSWORD+1}" ]; then
     RT_DB_PASSWORD="rt_pass"
+fi
+
+## LDAP admin's password:
+if [ -z "${LDAP_ADMIN_USERNAME+1}" ]; then
+    LDAP_ADMIN_USERNAME="cn=admin,dc=demo,dc=smartitsm,dc=org"
+fi
+
+## LDAP admin's password:
+if [ -z "${LDAP_ADMIN_PASSWORD+1}" ]; then
+    LDAP_ADMIN_PASSWORD="admin"
 fi
 
 

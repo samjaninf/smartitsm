@@ -24,7 +24,7 @@
 MODULE="idoit"
 TITLE="i-doit pro"
 DESCRIPTION="CMDB and IT documentation"
-VERSIONS="i-doit v0.9.9-9 pro"
+VERSIONS="i-doit v1.0 SVN branch"
 URL="/i-doit/"
 IT_STACK="http://www.smartitsm.org/it_stack/i-doit"
 PRIORITY="60"
@@ -39,21 +39,51 @@ if [ -z "${INSTALL_DIR+1}" ]; then
     INSTALL_DIR="/opt/$MODULE"
 fi
 
+## Installation directory
+if [ -z "${ICINGA_EXPORT_DIR+1}" ]; then
+    ICINGA_EXPORT_DIR="${INSTALL_DIR}/icingaexport"
+fi
+
 
 ## Installs this module.
 function do_install {
     loginfo "Installing i-doit..."
-    # FIXME fetch and extract distribution to installation dir.
-    mkdir -p "$INSTALL_DIR"/icingaexport || return 1
-    chown www-data:www-data -R "$INSTALL_DIR"/ || return 1
-    # TODO installation script
-    # TODO configure i-doit's Nagios module, add nagios user (with group Admin)
+
+    mkdir -p "$INSTALL_DIR" || return 1
+    cd "$INSTALL_DIR" || return 1
+    
+    loginfo "Fetching current branch from SVN repository..."
+    svn co http://dev.synetics.de/svn/idoit/branches/idoit-pro . || return 1
+
+    loginfo "Running setup script..."
+    {
+        echo "/usr/bin/mysql"
+        echo "idoit_data"
+        echo "idoit_system"
+        echo "$HOST"
+        echo "$MYSQL_DBA_PASSWORD"
+        echo "Y"
+    } | "$INSTALL_DIR"/setup/install.sh || return 1
+    chown www-data:www-data -R "$INSTALL_DIR" || return 1
+    
+    loginfo "Installing license..."
+    # TODO fetch and install license file,
+
+    loginfo "Performing update..."
+    ./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
+
+    cd "$BASE_DIR" || return 1
 
     loginfo "Installing Apache httpd configuration..."
     cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
+    service apache2 reload || return 1
     
     if [ -d "/etc/icinga" ]; then
-        loginfo "Creating symbolic links of Icinga export files..."
+        loginfo "Configuring i-doit's Nagios module..."
+        # TODO configure i-doit's Nagios module, add icinga user (with group Admin)
+        logdebug "Creating symbolic links of Icinga export files..."
+        mkdir -p "$ICINGA_EXPORT_DIR" || return 1
+        chown www-data:www-data -R "$ICINGA_EXPORT_DIR" || return 1
         "$INSTALL_DIR"/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org || return 1
         ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg /etc/icinga/objects/i-doit_commands.cfg || return 1
         ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg /etc/icinga/objects/i-doit_contacts.cfg || return 1
@@ -70,6 +100,8 @@ function do_install {
         # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
         # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
     fi
+    
+    # TODO configure LDAP module
     
     do_www_install || return 1
 
