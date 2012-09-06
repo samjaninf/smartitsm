@@ -105,7 +105,7 @@ PROJECT_COPYRIGHT="synetics GmbH <http://www.i-doit.com/>"
 ## Project website
 PROJECT_WEBSITE="http://www.smartitsm.org/demo"
 ## Version
-PROJECT_VERSION="0.1"
+PROJECT_VERSION="0.1 pre-alpha"
 
 
 ##
