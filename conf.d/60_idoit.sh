@@ -24,7 +24,7 @@
 MODULE="idoit"
 TITLE="i-doit pro"
 DESCRIPTION="CMDB and IT documentation"
-VERSIONS="i-doit v1.0 SVN branch"
+VERSIONS="i-doit pro 1.0 (SVN)"
 URL="/i-doit/"
 IT_STACK="http://www.smartitsm.org/it_stack/i-doit"
 PRIORITY="60"
@@ -47,40 +47,71 @@ fi
 
 ## Installs this module.
 function do_install {
-    loginfo "Installing i-doit..."
-
+    loginfo "Creating destination directory..."
     mkdir -p "$INSTALL_DIR" || return 1
-    cd "$INSTALL_DIR" || return 1
     
-    loginfo "Fetching current branch from SVN repository..."
-    svn co http://dev.synetics.de/svn/idoit/branches/idoit-pro . || return 1
+    loginfo "Fetching developing version from SVN repository..."
+    cd "$INSTALL_DIR" || return 1
+    if [ -d ".svn" ]; then
+        logdebug "Performing update..."
+        svn update || return 1
+    else
+        logdebug "Performing checkout..."
+        svn co http://dev.synetics.de/svn/idoit/branches/idoit-pro . || return 1
+    fi
 
     loginfo "Running setup script..."
+    cd "${INSTALL_DIR}/setup"
     {
-        echo "/usr/bin/mysql"
         echo "idoit_data"
         echo "idoit_system"
         echo "$HOST"
         echo "$MYSQL_DBA_PASSWORD"
         echo "Y"
-    } | "$INSTALL_DIR"/setup/install.sh || return 1
+    } | ./install.sh || return 1
     chown www-data:www-data -R "$INSTALL_DIR" || return 1
     
-    loginfo "Installing license..."
-    # TODO fetch and install license file,
-
-    loginfo "Performing update..."
-    ./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
-
-    cd "$BASE_DIR" || return 1
+    loginfo "Patching configuration file..."
+    cp "${INSTALL_DIR}/src/config.inc.php" "${INSTALL_DIR}/src/config.inc.php.bak" || return 1
+    sed \
+        # fix web root:
+        -e "s/\"www_dir\"       => \"/\",/\"www_dir\"       => \"/$MODULE\",/g" \
+        # increase session timer:
+        -e "s/\"sess_time\"     => 600,/\"sess_time\"     => 86400,/g" \
+        # enable admin center:
+        -e "s/\"admin\" => \"\",/\"admin\" => \"admin\",/g" \
+        # TODO configure SMTP
+        #-e "s/\"smtp-host\"  => \"\",/\"smtp-host\"  => \"\",/g" \
+        "${INSTALL_DIR}/src/config.inc.php.bak" > \
+        "${INSTALL_DIR}/src/config.inc.php" || return 1
+    
+    loginfo "Patching version..."
+    cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
+    sed \
+        -e "s/\"version\" => \"0.9.9-9a\",/\"version\" => \"0.9.9-9\",/g" \
+        "${INSTALL_DIR}/src/globals.inc.php.bak" > \
+        "${INSTALL_DIR}/src/globals.inc.php" || return 1
 
     loginfo "Installing Apache httpd configuration..."
     cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
     service apache2 reload || return 1
     
+    loginfo "Installing license..."
+    # TODO fetch and install license file,
+    logwarning "Open Web GUI with a browser and install a license. [ENTER]"
+    read userinteraction
+
+    loginfo "Performing update..."
+    ./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
+
+    cd "$BASE_DIR" || return 1
+    
     if [ -d "/etc/icinga" ]; then
         loginfo "Configuring i-doit's Nagios module..."
         # TODO configure i-doit's Nagios module, add icinga user (with group Admin)
+        logwarning "Open Web GUI with a browser and configure i-doit's Nagios module as described in documentaion. [ENTER]"
+        read userinteraction
+
         logdebug "Creating symbolic links of Icinga export files..."
         mkdir -p "$ICINGA_EXPORT_DIR" || return 1
         chown www-data:www-data -R "$ICINGA_EXPORT_DIR" || return 1
@@ -100,6 +131,12 @@ function do_install {
         # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
         # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
     fi
+    
+    # TODO configure TTS module
+    
+    # TODO configure OCS module
+    
+    # TODO configure ITGS module
     
     # TODO configure LDAP module
     

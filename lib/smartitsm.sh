@@ -26,7 +26,7 @@
 function run_install {
     for conf_file in "$CONFIG_DIR"/*.sh; do
         includeShellScript "$conf_file" || abort 1
-        loginfo "Installing module '$TITLE' ($DESCRIPTION)..."
+        lognotice "Installing module '$TITLE' ($DESCRIPTION)..."
         do_install
         if [ "$?" -gt 0 ]; then
             logerror "Installation failed."
@@ -42,7 +42,7 @@ function run_install {
 function run_www_install {
     for conf_file in "$CONFIG_DIR"/*.sh; do
         includeShellScript "$conf_file" || abort 1
-        loginfo "Installing module '$TITLE' ($DESCRIPTION)..."
+        lognotice "Installing module '$TITLE' ($DESCRIPTION)..."
         do_www_install
         if [ "$?" -gt 0 ]; then
             logerror "Installation failed."

@@ -67,7 +67,7 @@ function do_install {
         "s/\$Self->{Database} = 'otrs';/\$Self->{Database} = '$OTRS_DB_NAME';/g" \
         "s/\$Self->{DatabaseUser} = 'otrs';/\$Self->{DatabaseUser} = '$OTRS_DB_USERNAME';/g" \
         "s/\$Self->{DatabasePw} = 'some-pass';/\$Self->{DatabasePw} = '$OTRS_DB_PASSWORD';/g" \
-        /opt/otrs/Kernel/Config.pm.bak > /opt/otrs/Kernel/Config.pm
+        /opt/otrs/Kernel/Config.pm.bak > /opt/otrs/Kernel/Config.pm || return 1
     /opt/otrs/bin/otrs.CheckDB.pl || return 1
     # TODO install cron jobs
     # TODO configure mail system
