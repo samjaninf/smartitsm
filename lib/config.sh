@@ -145,14 +145,14 @@ if [ -z "${WWW_DIR+1}" ]; then
     WWW_DIR="${BASE_DIR}/www"
 fi
 
-## Path to temporary files:
-if [ -z "${TMP_DIR+1}" ]; then
-    TMP_DIR="/tmp"
-fi
-
 ## Installation directory:
 if [ -z "${SMARTITSM_ROOT_DIR+1}" ]; then
     SMARTITSM_ROOT_DIR="/opt/smartitsm"
+fi
+
+## Path to temporary files:
+if [ -z "${TMP_DIR+1}" ]; then
+    TMP_DIR="${SMARTITSM_ROOT_DIR}/build"
 fi
 
 ## Logo directory:

@@ -36,7 +36,6 @@ function do_install {
 ## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
-    mkdir -p "$SMARTITSM_ROOT_DIR" || return 1
     cp -r "$WWW_DIR" "$SMARTITSM_ROOT_DIR" || return 1
     mkdir -p "$LOGO_DIR" || return 1
     mkdir -p "$WWW_MODULE_DIR" || return 1

@@ -113,6 +113,10 @@ session.gc_maxlifetime = 86400
     a2enmod rewrite || return 1
     echo -e "\nServerName $HOST\n" >> /etc/apache2/apache2.conf || return 1
     
+    loginfo "Creating some important directories..."
+    mkdir -p "$SMARTITSM_ROOT_DIR" || return 1
+    mkdir -p "$TMP_DIR" || return 1
+    
     return 0
 }
 

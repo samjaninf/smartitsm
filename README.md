@@ -1,6 +1,6 @@
 #   smartITSM Demo System
 
-This project can help you building a complete, and fully-integrated tool chain for the IT service mangement (ITSM). It's meant as a powerful demonstration system -- please, do not use it in productive environments but take a deeper look at how we think about a good way to install and configure [these tools](#modules).
+This project can help you building a complete, and fully-integrated tool chain for the IT service mangement (ITSM). It's meant as a powerful demonstration system – please, do not use it in productive environments but take a deeper look at how we think about a good way to install and configure [these tools](#modules).
 
 *   Information about the demo system: <http://www.smartitsm.org/demo>
 *   Git repository: <https://github.com/bheisig/smartitsm.git>
