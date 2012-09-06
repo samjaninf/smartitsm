@@ -78,6 +78,21 @@ if [ -z "${OCS_DB_PASSWORD+1}" ]; then
     OCS_DB_PASSWORD="ocs"
 fi
 
+## OTRS Help Desk database name
+if [ -z "${OTRS_DB_NAME+1}" ]; then
+    OTRS_DB_NAME="otrs"
+fi
+
+## OTRS Help Desk database user
+if [ -z "${OTRS_DB_USERNAME+1}" ]; then
+    OTRS_DB_USERNAME="otrs"
+fi
+
+## OTRS Help Desk database user's password
+if [ -z "${OTRS_DB_PASSWORD+1}" ]; then
+    OTRS_DB_PASSWORD="otrs"
+fi
+
 ## RT DB user:
 if [ -z "${RT_DB_USERNAME+1}" ]; then
     RT_DB_USERNAME="rt_user"

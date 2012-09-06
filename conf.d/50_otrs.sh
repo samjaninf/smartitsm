@@ -32,9 +32,8 @@ PRIORITY="50"
 
 ## Installs this module.
 function do_install {
-    cd "$TMP_DIR" || return 1
-    
     loginfo "Installing OTRS Help Desk..."
+    cd "$TMP_DIR" || return 1
     download http://ftp.otrs.org/pub/otrs/otrs-3.1.10.tar.bz2 || return 1
     tar xjf otrs-3.1.10.tar.bz2 || return 1
     mv otrs-3.1.9/ /opt/otrs/ || return 1
@@ -49,22 +48,29 @@ function do_install {
     /opt/otrs/bin/otrs.SetPermissions.pl --otrs-user=otrs --web-user=www-data --otrs-group=www-data --web-group=www-data /opt/otrs || return 1
     ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf.d/otrs.config || return 1
     service apache2 restart || return 1
-    executeMySQLQuery "create database otrs charset utf8;" || return 1
-    executeMySQLImport "otrs" "/opt/otrs/scripts/database/otrs-schema.mysql.sql" || return 1
-    executeMySQLImport "otrs" "/opt/otrs/scripts/database/otrs-initial_insert.mysql.sql" || return 1
-    executeMySQLImport "otrs" "/opt/otrs/scripts/database/otrs-schema-post.mysql.sql" || return 1
-    executeMySQLQuery "GRANT ALL PRIVILEGES ON otrs.* TO otrs@localhost IDENTIFIED BY 'otrs' WITH GRANT OPTION;" || return 1
+    executeMySQLQuery "create database $OTRS_DB_NAME charset utf8;" || return 1
+    executeMySQLImport "$OTRS_DB_NAME" "/opt/otrs/scripts/database/otrs-schema.mysql.sql" || return 1
+    executeMySQLImport "$OTRS_DB_NAME" "/opt/otrs/scripts/database/otrs-initial_insert.mysql.sql" || return 1
+    executeMySQLImport "$OTRS_DB_NAME" "/opt/otrs/scripts/database/otrs-schema-post.mysql.sql" || return 1
+    executeMySQLQuery "GRANT ALL PRIVILEGES ON $OTRS_DB_NAME.* TO $OTRS_DB_USERNAME@localhost IDENTIFIED BY '$OTRS_DB_PASSWORD' WITH GRANT OPTION;" || return 1
     executeMySQLQuery "FLUSH PRIVILEGES;" || return 1
     # FIXME update config file:
     joe /opt/otrs/Kernel/Config.pm
     /opt/otrs/bin/otrs.CheckDB.pl || return 1
     
     loginfo "Installing OTRS-Extension-ReferenceIDoitObjects..."
-    # FIXME get OTRS-Extension-ReferenceIDoitObjects-0.4.tar.gz
-    tar xzf OTRS-Extension-ReferenceIDoitObjects-0.4.tar.gz || return 1
-    /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.4/ReferenceIDoitObjects-0.4.opm || return 1
-    service apache2 restart || return 1
-    # TODO configure extension, add dynamic fields
+    cd "$TMP_DIR" || return 1
+    local tarball="OTRS-Extension-ReferenceIDoitObjects-0.4.tar.gz"
+    if [ ! -r "$TMP_DIR/$tarball" ]; then
+        lognotice "Please copy $tarball to $TMP_DIR and press [ENTER]. To skip the installation just ignore this."
+        read userinteraction
+    fi
+    if [ -r "$TMP_DIR/$tarball" ]; then
+        tar xzf "$tarball" || return 1
+        /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.4/ReferenceIDoitObjects-0.4.opm || return 1
+        service apache2 restart || return 1
+        # TODO configure extension, add dynamic fields
+    fi
     
     cd "$BASE_DIR" || return 1
     
