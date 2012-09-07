@@ -46,10 +46,11 @@ function do_install {
     tar xzf rt-4.0.7.tar.gz || return 1
     cd rt-4.0.7/ || return 1
     ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate --with-db-dba="$MYSQL_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
-    ## Do not abort after this command:
+    ## Dry run: Do not abort after this command:
     make testdeps
     # TODO say "N" to live tests (Crypt-SSLeay)
     make fixdeps || return 1
+    make testdeps || return 1
     make install || return 1
     echo "$MYSQL_DBA_PASSWORD" | make initialize-database || return 1
     cd .. || return 1
@@ -60,15 +61,8 @@ function do_install {
     cpan -f -i RT::Extension::LDAPImport || return 1
     installCPANmodule "RT::Extension::MandatoryFields" || return 1
 
-    loginfo "Installing RT::Extension::ReferenceIDoitObjects..."
-    download "http://search.cpan.org/CPAN/authors/id/B/BH/BHEISIG/RT-Extension-ReferenceIDoitObjects-0.9.tar.gz" || return 1
-    tar xzf RT-Extension-ReferenceIDoitObjects-0.9.tar.gz || return 1
-    cd RT-Extension-ReferenceIDoitObjects-0.9/ || return 1
-    perl Makefile.PL || return 1
-    make || return 1
-    make test || return 1
-    make install || return 1
-    echo "$RT_DB_PASSWORD" | make initdb || return 1
+    installCPANmodule "RT::Extension::ReferenceIDoitObjects" || return 1
+    echo "$RT_DB_PASSWORD" | /opt/rt4/sbin/rt-setup-database --action insert --datafile /opt/rt4/local/plugins/RT-Extension-ReferenceIDoitObjects/etc/initialdata || return 1
     
     cd "$BASE_DIR" || return 1
     

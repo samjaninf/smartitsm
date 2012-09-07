@@ -31,18 +31,19 @@ PRIORITY="20"
 ## Installs this module.
 function do_install {
     loginfo "Preparing CPAN..."
-    perl -e 'for ( @INC ) { print -e $_ ? "Exists:  " : "Missing: ", $_, "\n" }'
-    mkdir -p /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/local/lib/site_perl
+    perl -e 'for ( @INC ) { print -e $_ ? "Exists:  " : "Missing: ", $_, "\n" }' || return 1
+    mkdir -p /usr/local/lib/perl/5.14.2 /usr/local/share/perl/5.14.2 /usr/local/lib/site_perl || return 1
     {
         echo "o conf build_requires_install_policy yes"
         echo "o conf prerequisites_policy follow"
         echo "o conf commit"
         echo "exit"
-    } | cpan
+    } | cpan || return 1
 
     # TODO "Somewhere" is a prompt for "Press <enter> to see the detailed list." and "Do you want to proceed with this configuration? [yes]" -- just enter:
     installCPANmodule "CPAN" || return 1
     installCPANmodule "YAML" || return 1
+    installCPANmodule "Test::Pod::Coverage" || return 1
     installCPANmodule "GD::Text" || return 1
     installCPANmodule "Moose" || return 1
     installCPANmodule "XML::Entities" || return 1
