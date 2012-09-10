@@ -25,7 +25,7 @@
 
 
 ##
-## Common settings
+## Common Settings and Credentials
 ##
 
 ## Hostname:
@@ -63,6 +63,16 @@ if [ -z "${ICINGA_ADMIN_PASSWORD+1}" ]; then
     ICINGA_ADMIN_PASSWORD="admin"
 fi
 
+## OCS admin user
+if [ -z "${OCS_ADMIN_USERNAME+1}" ]; then
+    OCS_ADMIN_USERNAME="admin"
+fi
+
+## OCS admin user's password
+if [ -z "${OCS_ADMIN_PASSWORD+1}" ]; then
+    OCS_ADMIN_PASSWORD="admin"
+fi
+
 ## OCS database name
 if [ -z "${OCS_DB_NAME+1}" ]; then
     OCS_DB_NAME="ocsweb"
@@ -78,6 +88,16 @@ if [ -z "${OCS_DB_PASSWORD+1}" ]; then
     OCS_DB_PASSWORD="ocs"
 fi
 
+## OTRS Help Desk admin user
+if [ -z "${OTRS_ADMIN_USERNAME+1}" ]; then
+    OTRS_ADMIN_USERNAME="root@localhost"
+fi
+
+## OTRS Help Desk admin user's password
+if [ -z "${OTRS_ADMIN_PASSWORD+1}" ]; then
+    OTRS_ADMIN_PASSWORD="root"
+fi
+
 ## OTRS Help Desk database name
 if [ -z "${OTRS_DB_NAME+1}" ]; then
     OTRS_DB_NAME="otrs"
@@ -91,6 +111,16 @@ fi
 ## OTRS Help Desk database user's password
 if [ -z "${OTRS_DB_PASSWORD+1}" ]; then
     OTRS_DB_PASSWORD="otrs"
+fi
+
+## RT admin user:
+if [ -z "${RT_ADMIN_USERNAME+1}" ]; then
+    RT_ADMIN_USERNAME="root"
+fi
+
+## MySQL admin user's password:
+if [ -z "${RT_ADMIN_PASSWORD+1}" ]; then
+    RT_ADMIN_PASSWORD="password"
 fi
 
 ## RT DB user:

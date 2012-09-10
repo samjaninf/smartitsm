@@ -199,8 +199,8 @@ function do_www_install {
         'versions' => '$VERSIONS',
         'credentials' => array(
             'System User' => array(
-                'username' => 'root',
-                'password' => 'password'
+                'username' => '$RT_ADMIN_USERNAME',
+                'password' => '$RT_ADMIN_PASSWORD'
             )
         )
     );

@@ -61,7 +61,7 @@ function do_install {
     fi
 
     loginfo "Running setup script..."
-    cd "${INSTALL_DIR}/setup"
+    cd "${INSTALL_DIR}/setup" || return 1
     {
         echo "idoit_data"
         echo "idoit_system"
@@ -73,15 +73,13 @@ function do_install {
     
     loginfo "Patching configuration file..."
     cp "${INSTALL_DIR}/src/config.inc.php" "${INSTALL_DIR}/src/config.inc.php.bak" || return 1
+    # fix web root; increase session timer; enable admin center:
+    # TODO configure SMTP:
+    #   -e "s/\"smtp-host\"  => \"\",/\"smtp-host\"  => \"\",/g" \
     sed \
-        # fix web root:
-        -e "s/\"www_dir\"       => \"/\",/\"www_dir\"       => \"/$MODULE\",/g" \
-        # increase session timer:
+        -e "s/\"www_dir\"       => \"\/\",/\"www_dir\"       => \"\/$MODULE\",/g" \
         -e "s/\"sess_time\"     => 600,/\"sess_time\"     => 86400,/g" \
-        # enable admin center:
         -e "s/\"admin\" => \"\",/\"admin\" => \"admin\",/g" \
-        # TODO configure SMTP
-        #-e "s/\"smtp-host\"  => \"\",/\"smtp-host\"  => \"\",/g" \
         "${INSTALL_DIR}/src/config.inc.php.bak" > \
         "${INSTALL_DIR}/src/config.inc.php" || return 1
     
@@ -102,15 +100,36 @@ function do_install {
     read userinteraction
 
     loginfo "Performing update..."
-    ./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
+    cd "$INSTALL_DIR" || return 1
+    # TODO controller handler "autoup" is not working:
+    #./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
+    logwarning "Open Web GUI with a browser, update to version 1.0, and install all available modules. [ENTER]"
+    read userinteraction
+    
+    loginfo "Patching version..."
+    cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
+    sed \
+        -e "s/\"version\" => \"0.9.9-9\",/\"version\" => \"1.0\",/g" \
+        "${INSTALL_DIR}/src/globals.inc.php.bak" > \
+        "${INSTALL_DIR}/src/globals.inc.php" || return 1
 
     cd "$BASE_DIR" || return 1
     
     if [ -d "/etc/icinga" ]; then
         loginfo "Configuring i-doit's Nagios module..."
-        # TODO configure i-doit's Nagios module, add icinga user (with group Admin)
-        logwarning "Open Web GUI with a browser and configure i-doit's Nagios module as described in documentaion. [ENTER]"
-        read userinteraction
+        
+        sed \
+            -e "s/%HOST%/$HOST/g" \
+            -e "s/%ICINGA_EXPORT_DIR%/$ICINGA_EXPORT_DIR/g" \
+            "${ETC_DIR}/idoit_icinga.sql" > "${TMP_DIR}/idoit_icinga.sql" || return 1
+        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_icinga.sql" || return 1
+        
+        logdebug "Adding user 'icinga'..."
+        sed \
+            -e "s/%USERNAME%/icinga/g" \
+            -e "s/%PASSWORD%/icinga/g" \
+            "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
+        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
 
         logdebug "Creating symbolic links of Icinga export files..."
         mkdir -p "$ICINGA_EXPORT_DIR" || return 1
@@ -132,9 +151,52 @@ function do_install {
         # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
     fi
     
-    # TODO configure TTS module
+    if [ -d "/opt/rt4" ]; then
+        loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for RT..."
+        
+        logdebug "Importing configuration..."
+        sed \
+            -e "s/%HOST%/$HOST/g" \
+            -e "s/%USERNAME%/$RT_ADMIN_USERNAME/g" \
+            -e "s/%PASSWORD%/$RT_ADMIN_PASSWORD/g" \
+            "${ETC_DIR}/idoit_rt.sql" > "${TMP_DIR}/idoit_rt.sql" || return 1
+        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_rt.sql" || return 1
+        
+        logdebug "Adding user 'rt'..."
+        sed \
+            -e "s/%USERNAME%/rt/g" \
+            -e "s/%PASSWORD%/rt/g" \
+            "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
+        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
+    fi
+    if [ -d "/opt/otrs" ]; then
+        loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for OTRS..."
+        
+        logdebug "Importing configuration..."
+        sed \
+            -e "s/%HOST%/$HOST/g" \
+            -e "s/%USERNAME%/$OTRS_ADMIN_USERNAME/g" \
+            -e "s/%PASSWORD%/$OTRS_ADMIN_PASSWORD/g" \
+            "${ETC_DIR}/idoit_otrs.sql" > "${TMP_DIR}/idoit_otrs.sql" || return 1
+        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_otrs.sql" || return 1
+        
+        logdebug "Adding user 'otrs'..."
+        sed \
+            -e "s/%USERNAME%/otrs/g" \
+            -e "s/%PASSWORD%/otrs/g" \
+            "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
+        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
+    fi
     
-    # TODO configure OCS module
+    if [ -d "/usr/share/ocsinventory-reports" ]; then
+        loginfo "Configuring idoit's module for OCS Inventory NG..."
+        sed \
+            -e "s/%OCS_DB_NAME%/$OCS_DB_NAME/g" \
+            -e "s/%OCS_DB_USERNAME%/$OCS_DB_USERNAME/g" \
+            -e "s/%OCS_DB_PASSWORD%/$OCS_DB_PASSWORD/g" \
+            "${ETC_DIR}/idoit_ocs.sql" > "${TMP_DIR}/idoit_ocs.sql" || return 1
+        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_ocs.sql" || return 1
+    fi
     
     # TODO configure ITGS module
     

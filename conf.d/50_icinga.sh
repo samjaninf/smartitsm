@@ -135,8 +135,8 @@ function do_www_install {
         'versions' => '$VERSIONS',
         'credentials' => array(
             'Administrator' => array(
-                'username' => 'icingaadmin',
-                'password' => 'admin'
+                'username' => '$ICINGA_ADMIN_USERNAME',
+                'password' => '$ICINGA_ADMIN_PASSWORD'
             )
         )
     );

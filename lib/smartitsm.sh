@@ -45,6 +45,7 @@ function process {
             status="$?"
         else
             logerror "Nothing to do."
+            printUsage
             return 1
         fi
         
@@ -62,7 +63,7 @@ function process {
 function considerModule {
     loginfo "Checking whether module will be considered..."
     
-    logdebug "Module: $1"
+    logdebug "Module: $MODULE"
     
     if [ -z "$MODULE_SELECTION" ]; then
         logdebug "No specific module selected. Assume all modules."

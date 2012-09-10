@@ -154,16 +154,16 @@ function do_www_install {
         'versions' => '$VERSIONS',
         'credentials' => array(
             'Administrator' => array(
-                'username' => 'admin',
-                'password' => 'admin'
+                'username' => '$OCS_ADMIN_USERNAME',
+                'password' => '$OCS_ADMIN_PASSWORD'
             )
         ),
         'api' => array(
             'soap' => array(
                 'type' => 'SOAP',
                 'url' => \$protocol . '://' . \$host . '/ocsinterface/',
-                'username' => 'admin',
-                'password' => 'admin'
+                'username' => '$OCS_ADMIN_USERNAME',
+                'password' => '$OCS_ADMIN_PASSWORD'
             ),
             'agent' => array(
                 'type' => 'Agent interface',

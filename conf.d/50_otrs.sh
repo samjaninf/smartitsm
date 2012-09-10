@@ -111,8 +111,8 @@ function do_www_install {
         'versions' => '$VERSIONS',
         'credentials' => array(
             'Administrator' => array(
-                'username' => 'root@localhost',
-                'password' => 'root'
+                'username' => '$OTRS_ADMIN_USERNAME',
+                'password' => '$OTRS_ADMIN_PASSWORD'
             )
         )
     );

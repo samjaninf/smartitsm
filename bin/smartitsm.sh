@@ -178,5 +178,4 @@ if [ "$PRINT_LICENSE" -eq 1 ]; then
 fi
 
 process && finishing
-printUsage
 abort 1
