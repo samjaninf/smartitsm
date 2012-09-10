@@ -105,7 +105,7 @@ function generatePassword {
 ##   $1 one or more space-separated packages
 function installPackage {
     loginfo "Installing package(s) $1..."
-    apt-get install -y $1
+    echo "$1" | xargs apt-get install -y
     local status=$?
     if [ "$status" -gt 0 ]; then
         logwarning "apt-get returned with error."
