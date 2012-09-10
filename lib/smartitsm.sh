@@ -22,13 +22,33 @@
 ## Project Library
 ##
 
-## Runs installation.
-function run_install {
+## Processes.
+function process {
     for conf_file in "$CONFIG_DIR"/*.sh; do
-        includeShellScript "$conf_file" || abort 1
+        includeShellScript "$conf_file" || return 1
+        
+        considerModule
+        if [ "$?" -eq 0 ]; then
+            logdebug "Skip module."
+            continue
+        fi
+        
         lognotice "Installing module '$TITLE' ($DESCRIPTION)..."
-        do_install
-        if [ "$?" -gt 0 ]; then
+        
+        local status=0
+        
+        if [ "$RUN_INSTALL" -eq 1 ]; then
+            do_install
+            status="$?"
+        elif [ "$RUN_WWW_INSTALL" -eq 1 ]; then
+            do_www_install
+            status="$?"
+        else
+            logerror "Nothing to do."
+            return 1
+        fi
+        
+        if [ "$status" -gt 0 ]; then
             logerror "Installation failed."
             return 1
         fi
@@ -38,19 +58,33 @@ function run_install {
     return 0
 }
 
-## Runs homepage installation.
-function run_www_install {
-    for conf_file in "$CONFIG_DIR"/*.sh; do
-        includeShellScript "$conf_file" || abort 1
-        lognotice "Installing module '$TITLE' ($DESCRIPTION)..."
-        do_www_install
-        if [ "$?" -gt 0 ]; then
-            logerror "Installation failed."
+## Checks whether module will be considered.
+function considerModule {
+    loginfo "Checking whether module will be considered..."
+    
+    logdebug "Module: $1"
+    
+    if [ -z "$MODULE_SELECTION" ]; then
+        logdebug "No specific module selected. Assume all modules."
+        MODULE_SELECTION="all"
+        return 1
+    fi
+    
+    if [ "$MODULE_SELECTION" == "all" ]; then
+        logdebug "All modules selected."
+        return 1
+    fi
+    
+    IFS=","
+    for module in $MODULE_SELECTION; do
+        if [ "$module" == "$MODULE" ]; then
+            logdebug "Module will be considered."
             return 1
         fi
-        logdebug "Module '$TITLE' installed."
     done
+    unset IFS
     
+    logdebug "Module will not be considered."
     return 0
 }
 
@@ -191,11 +225,43 @@ function fetchLogo {
     return 0
 }
 
+function listModules {
+    loginfo "Listing available modules..."
+    
+    AVAILABLE_MODULES=""
+    
+    for conf_file in "$CONFIG_DIR"/*.sh; do
+        includeShellScript "$conf_file" || return 1
+        
+        if [ -n "$AVAILABLE_MODULES" ]; then
+            AVAILABLE_MODULES="${AVAILABLE_MODULES}\n"
+        fi
+        
+        local tabs="\t\t"
+        local length="${#MODULE}"
+        if [ "$length" -le 3 ]; then
+            tabs="\t\t\t"
+        elif [ "$length" -ge 12 ]; then
+            tabs="\t"
+        fi
+        
+        AVAILABLE_MODULES="${AVAILABLE_MODULES}    ${MODULE}${tabs}${TITLE} (${DESCRIPTION}) [priority: ${PRIORITY}]"
+    done
+    
+    if [ -z "$AVAILABLE_MODULES" ]; then
+        AVAILABLE_MODULES="    no modules available"
+    fi
+        
+    return 0
+}
+
 ## Prints global usage
 function printUsage {
     loginfo "Printing global usage..."
+    
+    listModules || return 1
 
-    prntLn "Usage: '$BASE_NAME [output] [options]'"
+    prntLn "Usage: '$BASE_NAME [output] [options|information]'"
     prntLn ""
     prntLn "Output:"
     prntLn "    -q\t\t\tBe quiet (for scripting)."
@@ -205,12 +271,16 @@ function printUsage {
     prntLn ""
     prntLn "Options:"
     prntLn "    --install\t\tRun installation."
-    prntLn "    --www-install\t\tRun homepage installation only."
+    prntLn "    --www-install\tRun homepage installation only."
+    prntLn "    --module MODULE\t(Optional) Consider only module MODULE (title) and\n\t\t\tignore the rest. May be a comma separated list of\n\t\t\tmodule titles. Requires either --install or\n\t\t\t--www-install. Defaults to all modules."
     prntLn ""
     prntLn "Information:"
     prntLn "    -h, --help\t\tShow this help and exit."
     prntLn "    --license\t\tShow license information and exit."
     prntLn "    --version\t\tShow information about this script and exit."
+    prntLn ""
+    prntLn "Available Modules:"
+    prntLn "$AVAILABLE_MODULES"
 
     logdebug "Usage printed."
     return 0

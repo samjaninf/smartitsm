@@ -85,26 +85,37 @@ function log {
     fi
 }
 
+# Logs debug message
+##   $1 Log message
 function logdebug {
     log "$LOG_DEBUG" "$1"
 }
 
+# Logs info message
 function loginfo {
     log "$LOG_INFO" "$1"
 }
 
+# Logs notice message
+##   $1 Log message
 function lognotice {
     log "$LOG_NOTICE" "$1"
 }
 
+# Logs warning message
+##   $1 Log message
 function logwarning {
     log "$LOG_WARNING" "$1"
 }
 
+# Logs error message
+##   $1 Log message
 function logerror {
     log "$LOG_ERROR" "$1"
 }
 
+# Logs fatal message
+##   $1 Log message
 function logfatal {
     log "$LOG_FATAL" "$1"
 }
@@ -154,7 +165,7 @@ function calculateSpentTime {
     return 0
 }
 
-## Clean finishing
+## Runs clean finishing
 function finishing {
     loginfo "Finishing operation..."
     calculateSpentTime
@@ -162,8 +173,7 @@ function finishing {
     exit 0
 }
 
-
-## Clean abortion
+## Runs clean abortion
 ##   $1 Exit code
 function abort {
     loginfo "Aborting operation..."
@@ -173,24 +183,21 @@ function abort {
     exit $1
 }
 
-
-## Print line to standard output
+## Prints line to standard output
 ##   $1 string
 function prntLn {
     echo -e "$1" 1>&2
     return 0
 }
 
-
-## Print line without trailing new line to standard output
+## Prints line without trailing new line to standard output
 ##   $1 string
 function prnt {
     echo -e -n "$1" 1>&2
     return 0
 }
 
-
-## Print some information about this script
+## Prints some information about this script
 function printVersion {
     loginfo "Printing some information about this script..."
 
@@ -204,8 +211,7 @@ function printVersion {
     return 0
 }
 
-
-## Print license information
+## Prints license information
 function printLicense {
     loginfo "Printing license information..."
 

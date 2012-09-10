@@ -225,6 +225,14 @@ if [ -z "${RUN_WWW_INSTALL+1}" ]; then
     RUN_WWW_INSTALL=0
 fi
 
+## Module selection:
+if [ -z "${MODULE_SELECTION+1}" ]; then
+    MODULE_SELECTION="all"
+fi
+
+## Human-readable list of available modules:
+AVAILABLE_MODULES=""
+
 
 ##
 ## Output
