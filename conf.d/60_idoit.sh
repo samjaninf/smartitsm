@@ -96,7 +96,7 @@ function do_install {
     
     loginfo "Installing license..."
     # TODO fetch and install license file,
-    logwarning "Open Web GUI with a browser and install a license. [ENTER]"
+    logwarning "Open Web GUI with a browser, install a license key, and logout. [ENTER]"
     read userinteraction
 
     loginfo "Performing update..."
@@ -120,7 +120,7 @@ function do_install {
         
         sed \
             -e "s/%HOST%/$HOST/g" \
-            -e "s/%ICINGA_EXPORT_DIR%/$ICINGA_EXPORT_DIR/g" \
+            -e "s|%ICINGA_EXPORT_DIR%|$ICINGA_EXPORT_DIR|g" \
             "${ETC_DIR}/idoit_icinga.sql" > "${TMP_DIR}/idoit_icinga.sql" || return 1
         executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_icinga.sql" || return 1
         

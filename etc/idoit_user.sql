@@ -13,7 +13,7 @@ SET @RELATION = (SELECT isys_obj_type__id FROM isys_obj_type WHERE isys_obj_type
 SET @RELATIONTYPE = (SELECT isys_relation_type__id FROM isys_relation_type WHERE isys_relation_type__const = "C__RELATION_TYPE__PERSON_ASSIGNED_GROUPS");
 
 -- Sleep for one second to create an unique SYSID:
-SLEEP(1);
+SELECT SLEEP(1);
 
 INSERT INTO isys_obj (
     isys_obj__title,
@@ -71,7 +71,7 @@ INSERT INTO isys_person_2_group SET
 SET @PERSON2GROUP = (SELECT LAST_INSERT_ID());
 
 -- Sleep for one second to create an unique SYSID:
-SLEEP(1);
+SELECT SLEEP(1);
 
 INSERT INTO isys_obj (
     isys_obj__title,

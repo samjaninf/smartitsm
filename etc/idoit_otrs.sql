@@ -1,4 +1,4 @@
-SET @TYPE = (SELECT `isys_tts_type_id` FROM `isys_tts_type` WHERE `isys_tts_type__const` = "C__TTS__OTRS");
+SET @TYPE = (SELECT `isys_tts_type__id` FROM `isys_tts_type` WHERE `isys_tts_type__const` = "C__TTS__OTRS");
 
 INSERT INTO
     `isys_tts_config`
