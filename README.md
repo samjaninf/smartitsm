@@ -8,8 +8,6 @@ This project can help you building a complete, and fully-integrated tool chain f
 
 The demo system is part of our _smartITSM_ initiative. The initiative stands for great open source tools working together to enhance the IT service management of an organization. [Read more about it on our website!](http://www.smartitsm.org/smartitsm).
 
-**CAUTION: This is pre-alpha software which may break your system! Test it only in a non-productive environment!**
-
 
 ##  Modules
 
