@@ -6,8 +6,8 @@ INSERT INTO isys_nagios_ndo  SET
     isys_nagios_ndo__ndodb_port = '3306',
     isys_nagios_ndo__ndodb_schema = 'icinga',
     isys_nagios_ndo__ndodb_prefix = 'icinga_',
-    isys_nagios_ndo__ndodb_user = 'icinga-idoutils',
-    isys_nagios_ndo__ndodb_pass = 'hAbCdbC0xyAk';
+    isys_nagios_ndo__ndodb_user = '%IDOUTILS_DB_USERNAME%',
+    isys_nagios_ndo__ndodb_pass = '%IDOUTILS_DB_PASSWORD%';
 
 -- Icinga Web GUI
 

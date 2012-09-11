@@ -50,6 +50,12 @@ function do_install {
     make testdeps
     # TODO say "N" to live tests (Crypt-SSLeay)
     make fixdeps || return 1
+    # Repeat testdeps and fixdeps (if necessary):
+    make testdeps
+    if [ "$?" -gt 0 ]; then
+        make fixdeps || return 1
+    fi
+    # Finally, run last test:
     make testdeps || return 1
     make install || return 1
     echo "$MYSQL_DBA_PASSWORD" | make initialize-database || return 1

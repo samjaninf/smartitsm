@@ -44,6 +44,11 @@ if [ -z "${ICINGA_EXPORT_DIR+1}" ]; then
     ICINGA_EXPORT_DIR="${INSTALL_DIR}/icingaexport"
 fi
 
+## Icinga configuration directory
+if [ -z "${ICINGA_ETC_DIR+1}" ]; then
+    ICINGA_ETC_DIR="/etc/icinga"
+fi
+
 
 ## Installs this module.
 function do_install {
@@ -115,11 +120,13 @@ function do_install {
 
     cd "$BASE_DIR" || return 1
     
-    if [ -d "/etc/icinga" ]; then
+    if [ -d "$ICINGA_ETC_DIR" ]; then
         loginfo "Configuring i-doit's Nagios module..."
         
         sed \
             -e "s/%HOST%/$HOST/g" \
+            -e "s/%IDOUTILS_DB_USERNAME%/$IDOUTILS_DB_USERNAME/g" \
+            -e "s/%IDOUTILS_DB_PASSWORD%/$IDOUTILS_DB_PASSWORD/g" \
             -e "s|%ICINGA_EXPORT_DIR%|$ICINGA_EXPORT_DIR|g" \
             "${ETC_DIR}/idoit_icinga.sql" > "${TMP_DIR}/idoit_icinga.sql" || return 1
         executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_icinga.sql" || return 1
@@ -135,18 +142,18 @@ function do_install {
         mkdir -p "$ICINGA_EXPORT_DIR" || return 1
         chown www-data:www-data -R "$ICINGA_EXPORT_DIR" || return 1
         "$INSTALL_DIR"/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg /etc/icinga/objects/i-doit_commands.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg /etc/icinga/objects/i-doit_contacts.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostdependencies.cfg /etc/icinga/objects/i-doit_hostdependencies.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostescalations.cfg /etc/icinga/objects/i-doit_hostescalations.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostgroups.cfg /etc/icinga/objects/i-doit_hostgroups.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hosts.cfg /etc/icinga/objects/i-doit_hosts.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/servicedependencies.cfg /etc/icinga/objects/i-doit_servicedependencies.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/serviceescalations.cfg /etc/icinga/objects/i-doit_serviceescalations.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/servicegroups.cfg /etc/icinga/objects/i-doit_servicegroups.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/services.cfg /etc/icinga/objects/i-doit_services.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/timeperiods.cfg /etc/icinga/objects/i-doit_timeperiods.cfg || return 1
-        #ln -s "$INSTALL_DIR"/icingaexport/nagios.cfg /etc/icinga/icinga.cfg
+        ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg "$ICINGA_ETC_DIR"/objects/i-doit_commands.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg "$ICINGA_ETC_DIR"/objects/i-doit_contacts.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostdependencies.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostdependencies.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostescalations.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostescalations.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hostgroups.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostgroups.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/hosts.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hosts.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/servicedependencies.cfg "$ICINGA_ETC_DIR"/objects/i-doit_servicedependencies.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/serviceescalations.cfg "$ICINGA_ETC_DIR"/objects/i-doit_serviceescalations.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/servicegroups.cfg "$ICINGA_ETC_DIR"/objects/i-doit_servicegroups.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/services.cfg "$ICINGA_ETC_DIR"/objects/i-doit_services.cfg || return 1
+        ln -s "$INSTALL_DIR"/icingaexport/objects/timeperiods.cfg "$ICINGA_ETC_DIR"/objects/i-doit_timeperiods.cfg || return 1
+        #ln -s "$INSTALL_DIR"/icingaexport/nagios.cfg "$ICINGA_ETC_DIR"/icinga.cfg
         # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
         # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
     fi

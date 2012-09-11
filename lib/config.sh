@@ -63,6 +63,16 @@ if [ -z "${ICINGA_ADMIN_PASSWORD+1}" ]; then
     ICINGA_ADMIN_PASSWORD="admin"
 fi
 
+## IDOUtils DB user:
+if [ -z "${IDOUTILS_DB_USERNAME+1}" ]; then
+    IDOUTILS_DB_USERNAME="icinga-idoutils"
+fi
+
+## IDOUtils DB user's password:
+if [ -z "${IDOUTILS_DB_PASSWORD+1}" ]; then
+    IDOUTILS_DB_PASSWORD="icinga-idoutils"
+fi
+
 ## OCS admin user
 if [ -z "${OCS_ADMIN_USERNAME+1}" ]; then
     OCS_ADMIN_USERNAME="admin"
