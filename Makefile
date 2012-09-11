@@ -1,5 +1,5 @@
 project = smartitsm
-version = $(bin/smartitsm.sh --version 2>&1 | head -n1 | awk '{print $NF}')
+version = $(shell bin/smartitsm.sh --version 2>&1 | head -n1 | awk '{print $$NF}')
 package = $(project)-$(version)
 tarball = $(package).tar.gz
 
@@ -13,18 +13,18 @@ dist : readme changelog
 	@echo "Building distribution package..."
 	@echo "Version is $(version)."
 	@rm -rf $(package) && mkdir -p $(package)
-	@cp README CHANGELOG COPYING bin/ conf.d/ etc/ lib/ www/ $(package)
+	@cp -r README CHANGELOG COPYING bin/ conf.d/ etc/ lib/ www/ $(package)
 	@tar czf $(tarball) $(package)
 	@rm -r $(package)
 	@echo "Tarball $(tarball) is ready."
 
 readme :
 	@echo "Building README..."
-	@$(PANDOC) --from markdown --to plain --standalone README.md > README
+	@$(PANDOC) --from markdown --to plain --standalone --smart README.md > README
 
 changelog :
 	@echo "Building CHANGELOG..."
-	@$(PANDOC) --from markdown --to plain --standalone CHANGELOG.md > CHANGELOG
+	@$(PANDOC) --from markdown --to plain --standalone --smart CHANGELOG.md > CHANGELOG
 
 tag : git
 	@echo "Tagging version..."
@@ -44,7 +44,7 @@ distclean :
 	@rm -f README CHANGELOG
 
 
-## Helper
+## Help
 
 git :
 	@test -d ".git" || (echo "No git repository present." && exit 1)

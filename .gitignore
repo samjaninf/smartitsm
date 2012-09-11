@@ -4,3 +4,8 @@
 *.kate-swp
 *.old
 *.tmp
+
+## Distribution files:
+README
+CHANGELOG
+*.tar.gz
