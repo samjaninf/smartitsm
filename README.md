@@ -28,7 +28,7 @@ Each tool is encapsulated in a module. Currently, the demo system supports the f
 *   super user (`root`) rights
 
 
-##   Usage
+##  Download
 
 First of all, you have to fetch a copy of this repository. You can do this with a git client...
 
@@ -38,6 +38,9 @@ First of all, you have to fetch a copy of this repository. You can do this with 
 
     wget https://github.com/bheisig/smartitsm/tarball/master -O smartitsm_demo_system.tar.gz
     tar xzf smartitsm_demo_system.tar.gz
+
+
+##  Usage
 
 There is a script called `bin/smartitsm.sh` which will do everything for you. Before using [edit the local configuration](#configuration) under `etc/config.sh` to meet your preferences.
 
@@ -63,31 +66,33 @@ For more help type the following command:
 
     bin/smartitsm.sh --help
 
+This will print a list of all options and a list of available modules.
+
 
 ### Configuration
 
-The local configuration file is located under `etc/config.sh`. There is a default configuration file under `lib/config.sh` which may not be edited. To change a setting just copy it from the default configuration to the local one.
-
-Module configuration is done under `conf.d/`. Each module has its own file with the extension `.sh`. Ordering is done by a numeric prefix. To skip modules just rename their file extensions in the module configuration directory, for example:
-
-    mv conf.d/50_icinga.sh conf.d/50_icinga.sh.skip
-
-Each module gets its own item on the homepage of the smartITSM Demo System
+The local configuration file is located under `etc/config.sh`. There is a default configuration file under `lib/config.sh` which may not be edited. To change a setting just copy it from the default configuration to the local one. The pre-configuration is suitable for a first get-in-touch, but is not very secured.
 
 
-### Installation
+### Install Modules
 
-To install the modules just use the following command:
+To install all available modules just use the following command:
 
     bin/smartitsm.sh --install
+    
+If you prefer to select one or more modules use this:
+
+    bin/smartitsm.sh --install --module MODULE1,MODULE2,MODULE3
+
+Notice: Ordering is done by the modules' priorities. Each module has its own script file located under `conf.d/` with a priority number as prefix, e. g. `50_icinga.sh`.
 
     
-### Upgrade
+### Upgrade Modules
 
 Upgrading modules is currently not implemented yet.
 
 
-### Remove
+### Remove Modules
 
 Removing modules is currently not implemented yet.
 
@@ -95,6 +100,8 @@ Removing modules is currently not implemented yet.
 ##  Homepage of the smartITSM Demo System
 
 The demo system has its own homepage which is accessible with any modern web browser in the web root. For example, the default URL is <http://demo.smartitsm.org/>, but is only available if your nameserver is configured properly. Of course, the web server is available under the hosts's IP address, but this may break the interaction between the modules.
+
+Each module gets its own item on the homepage of the smartITSM Demo System.
 
 
 ##  Contribution
