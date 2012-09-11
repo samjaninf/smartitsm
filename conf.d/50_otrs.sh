@@ -24,7 +24,7 @@
 MODULE="otrs"
 TITLE="Open-source Ticket Request System (OTRS)"
 DESCRIPTION="issue tracking system"
-VERSIONS="OTRS Help Desk 3.1.10, ReferenceIDoitObjects 0.4 (closed beta)"
+VERSIONS="OTRS Help Desk 3.1.10, ReferenceIDoitObjects 0.5 (closed beta)"
 URL="/otrs/index.pl"
 IT_STACK="http://www.smartitsm.org/it_stack/otrs"
 PRIORITY="50"
@@ -63,10 +63,10 @@ function do_install {
     executeMySQLQuery "FLUSH PRIVILEGES;" || return 1
     logdebug "Changing standard configuration settings for database..."
     cp /opt/otrs/Kernel/Config.pm /opt/otrs/Kernel/Config.pm.bak
-    sed -e \
-        "s/\$Self->{Database} = 'otrs';/\$Self->{Database} = '$OTRS_DB_NAME';/g" \
-        "s/\$Self->{DatabaseUser} = 'otrs';/\$Self->{DatabaseUser} = '$OTRS_DB_USERNAME';/g" \
-        "s/\$Self->{DatabasePw} = 'some-pass';/\$Self->{DatabasePw} = '$OTRS_DB_PASSWORD';/g" \
+    sed \
+        -e "s/\$Self->{Database} = 'otrs';/\$Self->{Database} = '$OTRS_DB_NAME';/g" \
+        -e "s/\$Self->{DatabaseUser} = 'otrs';/\$Self->{DatabaseUser} = '$OTRS_DB_USERNAME';/g" \
+        -e "s/\$Self->{DatabasePw} = 'some-pass';/\$Self->{DatabasePw} = '$OTRS_DB_PASSWORD';/g" \
         /opt/otrs/Kernel/Config.pm.bak > /opt/otrs/Kernel/Config.pm || return 1
     /opt/otrs/bin/otrs.CheckDB.pl || return 1
     # TODO install cron jobs
@@ -75,14 +75,14 @@ function do_install {
     
     loginfo "Installing OTRS-Extension-ReferenceIDoitObjects..."
     cd "$TMP_DIR" || return 1
-    local tarball="OTRS-Extension-ReferenceIDoitObjects-0.4.tar.gz"
+    local tarball="OTRS-Extension-ReferenceIDoitObjects-0.5.tar.gz"
     if [ ! -r "$TMP_DIR/$tarball" ]; then
         lognotice "Please copy $tarball to $TMP_DIR and press [ENTER]. To skip the installation just ignore this."
         read userinteraction
     fi
     if [ -r "$TMP_DIR/$tarball" ]; then
         tar xzf "$tarball" || return 1
-        /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.4/ReferenceIDoitObjects-0.4.opm || return 1
+        /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.5/ReferenceIDoitObjects-0.5.opm || return 1
         service apache2 restart || return 1
         # TODO configure extension, add and configure dynamic fields
     fi
