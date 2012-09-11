@@ -82,15 +82,17 @@ function do_install {
     executeMySQLQuery "GRANT ALL ON $OCS_DB_NAME.* TO '$OCS_DB_USERNAME'@'localhost';" || return 1
     executeMySQLQuery "FLUSH PRIVILEGES;" || return 1
     executeMySQLImport "$OCS_DB_NAME" "ocsreports/files/ocsbase_new.sql"
-    logdebug "Removing install.php..."
-    rm /usr/share/ocsinventory-reports/ocsreports/install.php || return 1
+    # TODO Removing install.php break OCS:
+    #logdebug "Removing install.php..."
+    #rm /usr/share/ocsinventory-reports/ocsreports/install.php || return 1
     # TODO There seems to be a bug while restarting Apache httpd:
     # "ocsinventory-server: Can't load SOAP::Transport::HTTP* - Web service will be unavailable"
     # see: <http://forums.ocsinventory-ng.org/viewtopic.php?id=9102>
     # Workaround:
     mv /etc/apache2/conf.d/ocsinventory-server.conf /etc/apache2/conf.d/ocsinventory-server.conf.bak || return 1
     cat /etc/apache2/conf.d/ocsinventory-server.conf.bak | grep -v "Apache::Ocsinventory::SOAP" > /etc/apache2/conf.d/ocsinventory-server.conf || return 1
-    cd ..
+    rm /etc/apache2/conf.d/ocsinventory-server.conf.bak || return 1
+    cd .. || return 1
     service apache2 restart || return 1
 
     loginfo "Installing local OCS Inventory NG Unix agent..."
