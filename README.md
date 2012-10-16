@@ -16,7 +16,7 @@ Each tool is encapsulated in a module. Currently, the demo system supports the f
 *   **i-doit** v0.9.9-9 pro
 *   **Icinga** 1.7.1, Icinga-Web 1.7.2, IDOUtils 1.7.1, Nagios Plugins 1.4.15, PNP4Nagios 0.6.18
 *   **OCS Inventory NG** 2.0.5, OCS Inventory NG Unix Agent 2.0.5
-*   **OTRS Help Desk** 3.1.10, ReferenceIDoitObjects 0.5 (closed beta)
+*   **OTRS Help Desk** 3.1.11, ReferenceIDoitObjects 0.5 (closed beta)
 *   **Request Tracker (RT)** 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects
 
 
