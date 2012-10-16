@@ -119,7 +119,7 @@ Set(\$LogToSyslog, undef);
 Set(\$LogToFile , 'info');
 
 ## RT::Extension::ReferenceIDoitObject
-Set(\$IDoitURL, 'http://demo.smartitsm.org/i-doit_svn/index.php');
+Set(\$IDoitURL, 'http://demo.smartitsm.org/i-doit/index.php');
 Set(\$IDoitAPI, \$IDoitURL . '?api=jsonrpc');
 Set(\$IDoitUser, 'rt');
 Set(\$IDoitPassword, '822050d9ae3c47f54bee71b85fce1487'); # 'rt'
