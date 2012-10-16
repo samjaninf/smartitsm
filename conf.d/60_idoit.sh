@@ -82,7 +82,7 @@ function do_install {
     # TODO configure SMTP:
     #   -e "s/\"smtp-host\"  => \"\",/\"smtp-host\"  => \"\",/g" \
     sed \
-        -e "s/\"www_dir\"       => \"\/\",/\"www_dir\"       => \"\/$MODULE\",/g" \
+        -e "s/\"www_dir\"       => \"\/\",/\"www_dir\"       => \"$URL\",/g" \
         -e "s/\"sess_time\"     => 600,/\"sess_time\"     => 86400,/g" \
         -e "s/\"admin\" => \"\",/\"admin\" => \"admin\",/g" \
         "${INSTALL_DIR}/src/config.inc.php.bak" > \
