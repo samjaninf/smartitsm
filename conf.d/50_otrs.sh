@@ -24,7 +24,7 @@
 MODULE="otrs"
 TITLE="Open-source Ticket Request System (OTRS)"
 DESCRIPTION="issue tracking system"
-VERSIONS="OTRS Help Desk 3.1.13, ReferenceIDoitObjects 0.5 (closed beta)"
+VERSIONS="OTRS Help Desk 3.2.2, ReferenceIDoitObjects 0.5 (closed beta)"
 URL="/otrs/index.pl"
 IT_STACK="http://www.smartitsm.org/it_stack/otrs"
 PRIORITY="50"
@@ -34,11 +34,11 @@ PRIORITY="50"
 function do_install {
     loginfo "Installing OTRS Help Desk..."
     cd "$TMP_DIR" || return 1
-    download http://ftp.otrs.org/pub/otrs/otrs-3.1.13.tar.bz2 || return 1
+    download http://ftp.otrs.org/pub/otrs/otrs-3.2.2.tar.bz2 || return 1
     logdebug "Extracting tarball..."
-    tar xjf otrs-3.1.13.tar.bz2 || return 1
+    tar xjf otrs-3.2.2.tar.bz2 || return 1
     logdebug "Moving files to destination directory..."
-    mv otrs-3.1.13/ /opt/otrs/ || return 1
+    mv otrs-3.2.2/ /opt/otrs/ || return 1
     logdebug "Checking modules..."
     perl /opt/otrs/bin/otrs.CheckModules.pl || return 1
     logdebug "Adding system user..."
