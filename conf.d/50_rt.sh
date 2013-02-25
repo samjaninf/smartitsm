@@ -24,7 +24,7 @@
 MODULE="rt"
 TITLE="Request Tracker (RT)"
 DESCRIPTION="issue tracking system"
-VERSIONS="Request Tracker (RT) 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
+VERSIONS="Request Tracker (RT) 4.0.10, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
 URL="/rt/"
 IT_STACK="http://www.smartitsm.org/it_stack/request_tracker"
 PRIORITY="50"
@@ -42,9 +42,9 @@ function do_install {
     cd "$TMP_DIR" || return 1
     
     loginfo "Installing RT..."
-    download "http://download.bestpractical.com/pub/rt/release/rt-4.0.7.tar.gz" || return 1
-    tar xzf rt-4.0.7.tar.gz || return 1
-    cd rt-4.0.7/ || return 1
+    download "http://download.bestpractical.com/pub/rt/release/rt-4.0.10.tar.gz" || return 1
+    tar xzf rt-4.0.10.tar.gz || return 1
+    cd rt-4.0.10/ || return 1
     ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate --with-db-dba="$MYSQL_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
     ## Dry run: Do not abort after this command:
     make testdeps
