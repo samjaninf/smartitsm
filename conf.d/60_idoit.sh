@@ -97,7 +97,7 @@ function do_install {
 
     loginfo "Installing Apache httpd configuration..."
     cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
-    service apache2 reload || return 1
+    restartWebServer || return 1
     
     loginfo "Installing license..."
     # TODO fetch and install license file,

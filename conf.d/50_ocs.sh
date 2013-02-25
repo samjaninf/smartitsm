@@ -93,7 +93,7 @@ function do_install {
     cat /etc/apache2/conf.d/ocsinventory-server.conf.bak | grep -v "Apache::Ocsinventory::SOAP" > /etc/apache2/conf.d/ocsinventory-server.conf || return 1
     rm /etc/apache2/conf.d/ocsinventory-server.conf.bak || return 1
     cd .. || return 1
-    service apache2 restart || return 1
+    restartWebServer || return 1
 
     loginfo "Installing local OCS Inventory NG Unix agent..."
     wget https://launchpad.net/ocsinventory-unix-agent/stable-2.0/2.0.5/+download/Ocsinventory-Unix-Agent-2.0.5.tar.gz || return 1

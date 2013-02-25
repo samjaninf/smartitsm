@@ -54,7 +54,7 @@ function do_install {
     /opt/otrs/bin/otrs.SetPermissions.pl --otrs-user=otrs --web-user=www-data --otrs-group=www-data --web-group=www-data /opt/otrs || return 1
     logdebug "Installing Apache httpd configuration file..."
     ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf.d/otrs.config || return 1
-    service apache2 restart || return 1
+    restartWebServer || return 1
     executeMySQLQuery "create database $OTRS_DB_NAME charset utf8;" || return 1
     executeMySQLImport "$OTRS_DB_NAME" "/opt/otrs/scripts/database/otrs-schema.mysql.sql" || return 1
     executeMySQLImport "$OTRS_DB_NAME" "/opt/otrs/scripts/database/otrs-initial_insert.mysql.sql" || return 1
@@ -83,7 +83,7 @@ function do_install {
     if [ -r "$TMP_DIR/$tarball" ]; then
         tar xzf "$tarball" || return 1
         /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.5/ReferenceIDoitObjects-0.5.opm || return 1
-        service apache2 restart || return 1
+        restartWebServer || return 1
         # TODO configure extension, add and configure dynamic fields
     fi
     

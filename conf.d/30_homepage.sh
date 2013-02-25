@@ -40,7 +40,7 @@ function do_www_install {
     mkdir -p "$LOGO_DIR" || return 1
     mkdir -p "$WWW_MODULE_DIR" || return 1
     cp "$ETC_DIR"/apache.conf /etc/apache2/conf.d/smartitsm.conf || return 1
-    service apache2 restart || return 1
+    restartWebServer || return 1
     return 0
 }
 

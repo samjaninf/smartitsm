@@ -189,6 +189,11 @@ function executeMySQLImport {
     return 0
 }
 
+function restartWebServer {
+    loginfo "Restarting web server..."
+    service apache2 restart || return 1
+}
+
 ## Fetches a module logo from web. Optionally converts images to the PNG format.
 ##   $1 URL to image
 ##   $2 (optional) File extension (if not 'png')
