@@ -130,6 +130,9 @@ function upgradeSystem {
     logdebug "Dist-upgrading..."
     apt-get dist-upgrade -y || return 1
     
+    logdebug "Cleaning up..."
+    apt-get clean -y || return 1
+    
     logdebug "System upgraded."
     
     return 0

@@ -44,8 +44,8 @@ function do_install {
         logwarning "lsb_release is not available or returned with an error."
         return 1
     fi
-    if [ "$release" != "12.04" ]; then
-        logwarning "Distribution Ubuntu 12.04 LTS is required."
+    if [ "$release" != "12.10" ]; then
+        logwarning "Distribution Ubuntu 12.10 is required."
         return 1
     fi
 
@@ -60,9 +60,14 @@ function do_install {
     loginfo "Upgrading system..."
     upgradeSystem || return 1
 
-    loginfo "Installing packages..."
-    # TODO Use automatically MySQL DBA credentials to configure mysql-server package:
-    installPackage "joe htop make python-software-properties rcconf pwgen unzip subversion git pandoc imagemagick apache2 libapache2-mod-perl2 php5 php5-cli php5-curl php5-gd php5-imagick php5-ldap php5-mcrypt php5-mysql php5-mysqli php5-pgsql php5-suhosin php5-xcache php5-xdebug php-pear php5-xmlrpc php5-xsl mysql-server mysql-client libmodule-signature-perl libcpan-uploader-perl libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool devscripts libsnmp-dev" || return 1
+    loginfo "Installing administration packages..."
+    installPackage "joe htop make python-software-properties rcconf pwgen unzip subversion git pandoc imagemagick devscripts libmodule-signature-perl libcpan-uploader-perl libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool libsnmp-dev" || return 1
+    
+    loginfo "Installing MySQL..."
+    {
+        echo "$MYSQL_DBA_PASSWORD"
+        echo "$MYSQL_DBA_PASSWORD"
+    } | apt-get install -y "mysql-server mysql-client" || return 1
 
     loginfo "Tweaking MySQL server configuration..."
     echo "[mysqld]
@@ -76,6 +81,9 @@ read_buffer_size=1M
     loginfo "Removing unnecessary MySQL users..."
     executeMySQLQuery "DELETE FROM mysql.user WHERE Password = '';" || return 1
     executeMySQLQuery "DROP USER ''@'%';" || return 1
+    
+    loginfo "Installing web server..."
+    installPackage "apache2 libapache2-mod-perl2 php5 php5-cli php5-curl php5-gd php5-imagick php5-ldap php5-mcrypt php5-mysql php5-pgsql php5-suhosin php5-xcache php5-xdebug php-pear php5-xmlrpc php5-xsl " || return 1
 
     loginfo "Tweaking PHP configuration for Apache httpd..."
     echo "max_execution_time = 300
