@@ -58,10 +58,10 @@ function do_install {
 
 function installIcinga {
     loginfo "Installing Icinga..."
-    # TODO Press enter to continue:
-    add-apt-repository ppa:formorer/icinga || return 1
+    add-apt-repository --yes ppa:formorer/icinga || return 1
     apt-get update || return 1
     # TODO Handle several package configuration settings...
+    # TODO allow external commands:
     installPackage "icinga icinga-doc" || return 1
 }
 

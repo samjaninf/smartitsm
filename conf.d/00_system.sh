@@ -61,13 +61,14 @@ function do_install {
     upgradeSystem || return 1
 
     loginfo "Installing administration packages..."
-    installPackage "joe htop make python-software-properties rcconf pwgen unzip subversion git pandoc imagemagick devscripts libmodule-signature-perl libcpan-uploader-perl libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool libsnmp-dev" || return 1
+    installPackage "joe htop make python-software-properties software-properties-common rcconf pwgen unzip subversion git pandoc imagemagick devscripts quilt libmodule-signature-perl libcpan-uploader-perl libgd-gd2-perl graphviz libexpat1-dev perl-doc nmap librrds-perl rrdtool libsnmp-dev" || return 1
     
+    # TODO Doesn't work:
     loginfo "Installing MySQL..."
     {
         echo "$MYSQL_DBA_PASSWORD"
         echo "$MYSQL_DBA_PASSWORD"
-    } | apt-get install -y "mysql-server mysql-client" || return 1
+    } | apt-get install -y mysql-server mysql-client || return 1
 
     loginfo "Tweaking MySQL server configuration..."
     echo "[mysqld]
@@ -104,7 +105,7 @@ session.gc_maxlifetime = 86400
     apt-get autoremove --purge -y ntpdate || return 1
     installPackage "ntp" || return 1
 
-    loginfo "Installing phpMyAdmin (after MySQL server has been started)..."
+    loginfo "Installing phpMyAdmin (after Apache HTTPd and MySQL deamons have been started)..."
     # TODO Use automatically apache2 as prefered webserver.
     # TODO Say "Yes" to run dbconfig-common.
     # TODO Use automatically MySQL DBA user's password.
@@ -127,6 +128,7 @@ session.gc_maxlifetime = 86400
     loginfo "Tweaking Apache httpd configuration..."
     a2enmod rewrite || return 1
     echo -e "\nServerName $HOST\n" >> /etc/apache2/apache2.conf || return 1
+    restartWebServer || return 1
     
     loginfo "Creating some important directories..."
     mkdir -p "$SMARTITSM_ROOT_DIR" || return 1

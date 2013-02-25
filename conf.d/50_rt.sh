@@ -48,7 +48,6 @@ function do_install {
     ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate --with-db-dba="$MYSQL_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
     ## Dry run: Do not abort after this command:
     make testdeps
-    # TODO say "N" to live tests (Crypt-SSLeay)
     make fixdeps || return 1
     # Repeat testdeps and fixdeps (if necessary):
     make testdeps

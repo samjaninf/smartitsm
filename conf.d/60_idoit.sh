@@ -24,10 +24,11 @@
 MODULE="idoit"
 TITLE="i-doit pro"
 DESCRIPTION="CMDB and IT documentation"
-VERSIONS="i-doit pro 1.0 (SVN)"
+VERSIONS="i-doit pro 1.0.2"
 URL="/i-doit/"
 IT_STACK="http://www.smartitsm.org/it_stack/i-doit"
 PRIORITY="60"
+LATEST="1.0.2"
 
 
 ##
@@ -55,15 +56,9 @@ function do_install {
     loginfo "Creating destination directory..."
     mkdir -p "$INSTALL_DIR" || return 1
     
-    loginfo "Fetching developing version from SVN repository..."
-    cd "$INSTALL_DIR" || return 1
-    if [ -d ".svn" ]; then
-        logdebug "Performing update..."
-        svn update || return 1
-    else
-        logdebug "Performing checkout..."
-        svn co http://dev.synetics.de/svn/idoit/branches/idoit-pro . || return 1
-    fi
+    installLatest || return 1
+    #installTrunk || return 1
+    #installStable || return 1
 
     loginfo "Running setup script..."
     cd "${INSTALL_DIR}/setup" || return 1
@@ -75,6 +70,9 @@ function do_install {
         echo "Y"
     } | ./install.sh || return 1
     chown www-data:www-data -R "$INSTALL_DIR" || return 1
+    
+    loginfo "Updating database..."
+    sudo ./controller -u admin -p admin -i 1 -m autoup -g
     
     loginfo "Patching configuration file..."
     cp "${INSTALL_DIR}/src/config.inc.php" "${INSTALL_DIR}/src/config.inc.php.bak" || return 1
@@ -88,12 +86,12 @@ function do_install {
         "${INSTALL_DIR}/src/config.inc.php.bak" > \
         "${INSTALL_DIR}/src/config.inc.php" || return 1
     
-    loginfo "Patching version..."
-    cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
-    sed \
-        -e "s/\"version\" => \"0.9.9-9a\",/\"version\" => \"0.9.9-9\",/g" \
-        "${INSTALL_DIR}/src/globals.inc.php.bak" > \
-        "${INSTALL_DIR}/src/globals.inc.php" || return 1
+    #loginfo "Patching version..."
+    #cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
+    #sed \
+    #    -e "s/\"version\" => \"0.9.9-9a\",/\"version\" => \"0.9.9-9\",/g" \
+    #    "${INSTALL_DIR}/src/globals.inc.php.bak" > \
+    #    "${INSTALL_DIR}/src/globals.inc.php" || return 1
 
     loginfo "Installing Apache httpd configuration..."
     cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
@@ -104,19 +102,19 @@ function do_install {
     logwarning "Open Web GUI with a browser, install a license key, and logout. [ENTER]"
     read userinteraction
 
-    loginfo "Performing update..."
-    cd "$INSTALL_DIR" || return 1
-    # TODO controller handler "autoup" is not working:
-    #./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
-    logwarning "Open Web GUI with a browser, update to version 1.0, and install all available modules. [ENTER]"
-    read userinteraction
+    #loginfo "Performing update..."
+    #cd "$INSTALL_DIR" || return 1
+    ## TODO controller handler "autoup" is not working:
+    ##./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
+    #logwarning "Open Web GUI with a browser, update to version 1.0, and install all available modules. [ENTER]"
+    #read userinteraction
     
-    loginfo "Patching version..."
-    cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
-    sed \
-        -e "s/\"version\" => \"0.9.9-9\",/\"version\" => \"1.0\",/g" \
-        "${INSTALL_DIR}/src/globals.inc.php.bak" > \
-        "${INSTALL_DIR}/src/globals.inc.php" || return 1
+    #loginfo "Patching version..."
+    #cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
+    #sed \
+    #    -e "s/\"version\" => \"0.9.9-9\",/\"version\" => \"1.0\",/g" \
+    #    "${INSTALL_DIR}/src/globals.inc.php.bak" > \
+    #    "${INSTALL_DIR}/src/globals.inc.php" || return 1
 
     cd "$BASE_DIR" || return 1
     
@@ -212,6 +210,53 @@ function do_install {
     do_www_install || return 1
 
     return 0
+}
+
+function installLatest {
+    loginfo "Installation latest stable version from local file..."
+    
+    local mainPackage="idoit-1.0.zip"
+    local updatePackage="idoit-1.0.2-update.zip"
+    
+    if [ ! -r "${INSTALL_DIR}/${mainPackage}" ]; then
+        logwarning "Main package $mainPackage is missing. Please copy it to $INSTALL_DIR and press [ENTER]."
+        read userinteraction
+    fi
+    
+    if [ ! -r "${INSTALL_DIR}/${updatePackage}" ]; then
+        logwarning "Main package $updatePackage is missing. Please copy it to $INSTALL_DIR and press [ENTER]."
+        read userinteraction
+    fi
+    
+    unzip "$mainPackage" || return 1
+    unzip -o "$updatePackage" || return 1
+    
+    mv "$mainPackage" "$TMP_DIR" || return 1
+    mv "$updatePackage" "$TMP_DIR" || return 1
+}
+
+function installTrunk {
+    loginfo "Fetching developing version from SVN repository..."
+    cd "$INSTALL_DIR" || return 1
+    if [ -d ".svn" ]; then
+        logdebug "Performing update..."
+        svn update || return 1
+    else
+        logdebug "Performing checkout..."
+        svn co http://dev.synetics.de/svn/idoit/trunk . || return 1
+    fi
+}
+
+function installStable {
+    loginfo "Fetching stable version from SVN repository..."
+    cd "$INSTALL_DIR" || return 1
+    if [ -d ".svn" ]; then
+        logdebug "Performing update..."
+        svn update || return 1
+    else
+        logdebug "Performing checkout..."
+        svn co http://dev.synetics.de/svn/idoit/branches/idoit-stable . || return 1
+    fi
 }
 
 ## Installs homepage configuration.
