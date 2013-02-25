@@ -118,6 +118,9 @@ Set(@Plugins, qw(
 Set(\$LogToSyslog, undef);
 Set(\$LogToFile , 'info');
 
+## Little performance tweak
+Set(\$AutocompleteOwners, 1);
+
 ## RT::Extension::ReferenceIDoitObject
 Set(\$IDoitURL, 'http://demo.smartitsm.org/i-doit/index.php');
 Set(\$IDoitAPI, \$IDoitURL . '?api=jsonrpc');
