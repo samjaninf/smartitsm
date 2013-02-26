@@ -73,6 +73,17 @@ function do_install {
     # TODO configure mail system
     # TODO configure scheduler (optional)
     
+    installReferenceIDoitObjects || return 1
+    
+    cd "$BASE_DIR" || return 1
+    
+    do_www_install || return 1
+    
+    return 0
+}
+
+# TODO Change requirements from 3.1.x to 3.2.x!
+function installReferenceIDoitObjects {
     loginfo "Installing OTRS-Extension-ReferenceIDoitObjects..."
     cd "$TMP_DIR" || return 1
     local tarball="OTRS-Extension-ReferenceIDoitObjects-0.5.tar.gz"
@@ -86,12 +97,6 @@ function do_install {
         restartWebServer || return 1
         # TODO configure extension, add and configure dynamic fields
     fi
-    
-    cd "$BASE_DIR" || return 1
-    
-    do_www_install || return 1
-    
-    return 0
 }
 
 ## Installs homepage configuration.

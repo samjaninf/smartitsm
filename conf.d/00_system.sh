@@ -100,6 +100,14 @@ session.gc_maxlifetime = 86400
 " > /etc/php5/apache2/conf.d/smartitsm.ini || return 1
 
     restartWebServer || return 1
+    
+    loginfo "Installing PostgreSQL..."
+    installPackage "postgresql postgresql-client phppgadmin" || return 1
+    # TODO change postgres's password
+    # TODO edit /etc/postgresql/9.1/main/postgresql.conf
+    # * listen_addresses = '*'
+    # * port = 25321
+    #service postgresql restart
 
     loginfo "Installing NTP deamon..."
     apt-get autoremove --purge -y ntpdate || return 1
