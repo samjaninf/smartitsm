@@ -1,0 +1,47 @@
+#!/bin/bash
+
+
+## smartITSM Demo System
+## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as
+## published by the Free Software Foundation, either version 3 of the
+## License, or (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+##
+## Dump MySQL databases
+##
+
+## Include default configuration:
+DEFAULT_CONFIGURATION="lib/config.sh"
+if [ ! -r "$DEFAULT_CONFIGURATION" ]; then
+    exit 255
+fi
+source "$DEFAULT_CONFIGURATION"
+
+## Include local configuration:
+LOCAL_CONFIGURATION="etc/config.sh"
+if [ -r "$LOCAL_CONFIGURATION" ]; then
+    source "$LOCAL_CONFIGURATION"
+fi
+
+USERNAME="$MYSQL_DBA_USERNAME"
+PASSWORD="$MYSQL_DBA_PASSWORD"
+HOSTNAME="localhost"
+
+DATE=`date +%F_%H_%M_%S`
+TARGET="${ETC_DIR}/mysql_dump_${DATE}.sql.gz"                                                                                                                                                                                           
+                                                                                                                                                                                                                                             
+mysqldump --user="$USERNAME" --password="$PASSWORD" -h "$HOSTNAME" --all-databases | gzip -c > "$TARGET"                                                                                                                                     
+                                                                                                                                                                                                                                             
+exit "$?"
