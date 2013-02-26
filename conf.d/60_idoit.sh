@@ -56,6 +56,7 @@ function do_install {
     loginfo "Creating destination directory..."
     mkdir -p "$INSTALL_DIR" || return 1
     
+    # TODO make decision configurable:
     installLatest || return 1
     #installTrunk || return 1
     #installStable || return 1
@@ -211,6 +212,7 @@ function importDemoDump {
 function configureIcinga {
     loginfo "Configuring i-doit's Nagios module..."
     
+    # TODO Table columns changed in version 1.0!
     sed \
         -e "s/%HOST%/$HOST/g" \
         -e "s/%IDOUTILS_DB_USERNAME%/$IDOUTILS_DB_USERNAME/g" \
@@ -248,12 +250,17 @@ function configureIcinga {
 
 function configureOCS {
     loginfo "Configuring idoit's module for OCS Inventory NG..."
+
     sed \
         -e "s/%OCS_DB_NAME%/$OCS_DB_NAME/g" \
         -e "s/%OCS_DB_USERNAME%/$OCS_DB_USERNAME/g" \
         -e "s/%OCS_DB_PASSWORD%/$OCS_DB_PASSWORD/g" \
         "${ETC_DIR}/idoit_ocs.sql" > "${TMP_DIR}/idoit_ocs.sql" || return 1
     executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_ocs.sql" || return 1
+    
+    loginfo "Performing initial OCS Inventory NG import..."
+    cd "$INSTALL_DIR" || return 1
+    ./controller -v -u admin -p admin -i 1 -m ocs
 }
 
 function configureRT {
