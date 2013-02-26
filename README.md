@@ -40,14 +40,15 @@ First of all, you have to fetch a copy of this repository. You can do this with 
 
 ##  Usage
 
-There is a script called `bin/smartitsm.sh` which will do everything for you. Before using [edit the local configuration](#configuration) under `etc/config.sh` to meet your preferences.
+There is a script called `bin/smartitsm` which will do everything for you. Before using [edit the local configuration](#configuration) under `etc/config.sh` to meet your preferences.
 
 Furthermore there are several files you should be aware of:
 
 *   `bin/` – executables
-    *   `build_icinga_configuration_from_i-doit.sh` – export Icinga configuration from i-doit and enable it in Icinga itself
-    *   `rt_clean_cache_apache_restart.sh` – clean restart of Request Tracker (RT)
-    *   `smartitsm.sh` – main script
+    *   `icinga_build_configuration_from_i-doit` – export Icinga configuration from i-doit and enable it in Icinga itself
+    *   `mysql_dump` – dump MySQL databases to `etc` directory
+    *   `rt_clean_cache_apache_restart` – clean restart of Request Tracker (RT)
+    *   `smartitsm` – main script
 *   `conf.d/` – module configuration
     *   `00_system.sh` – base system
     *   `20_cpan.sh` – CPAN
@@ -55,14 +56,14 @@ Furthermore there are several files you should be aware of:
 *   `etc/` – misc files
     *   `apache.conf` – Apache httpd configuration file for the homepage of the smartITSM Demo System
     *   `config.sh` – local configuration file for `bin/smartitsm.sh`
-*   `lib` – libraries used by `bin/smartitsm.sh`
+*   `lib` – libraries used by `bin/smartitsm`
     *   `config.sh` – default configuration file
     *   […]
 *   `www` – files for the smartITSM homepage
 
 For more help type the following command:
 
-    bin/smartitsm.sh --help
+    bin/smartitsm --help
 
 This will print a list of all options and a list of available modules.
 
@@ -76,11 +77,11 @@ The local configuration file is located under `etc/config.sh`. There is a defaul
 
 To install all available modules just use the following command:
 
-    bin/smartitsm.sh --install
+    bin/smartitsm --install
     
 If you prefer to select one or more modules use this:
 
-    bin/smartitsm.sh --install --module MODULE1,MODULE2,MODULE3
+    bin/smartitsm --install --module MODULE1,MODULE2,MODULE3
 
 Notice: Ordering is done by the modules' priorities. Each module has its own script file located under `conf.d/` with a priority number as prefix, e. g. `50_icinga.sh`.
 
