@@ -60,19 +60,8 @@ function do_install {
     #installTrunk || return 1
     #installStable || return 1
 
-    loginfo "Running setup script..."
-    cd "${INSTALL_DIR}/setup" || return 1
-    {
-        echo "idoit_data"
-        echo "idoit_system"
-        echo "$HOST"
-        echo "$MYSQL_DBA_PASSWORD"
-        echo "Y"
-    } | ./install.sh || return 1
     chown www-data:www-data -R "$INSTALL_DIR" || return 1
-    
-    loginfo "Updating database..."
-    sudo ./controller -u admin -p admin -i 1 -m autoup -g
+    chmod og+rw -R "$INSTALL_DIR" || return 1
     
     loginfo "Patching configuration file..."
     cp "${INSTALL_DIR}/src/config.inc.php" "${INSTALL_DIR}/src/config.inc.php.bak" || return 1
@@ -85,13 +74,6 @@ function do_install {
         -e "s/\"admin\" => \"\",/\"admin\" => \"admin\",/g" \
         "${INSTALL_DIR}/src/config.inc.php.bak" > \
         "${INSTALL_DIR}/src/config.inc.php" || return 1
-    
-    #loginfo "Patching version..."
-    #cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
-    #sed \
-    #    -e "s/\"version\" => \"0.9.9-9a\",/\"version\" => \"0.9.9-9\",/g" \
-    #    "${INSTALL_DIR}/src/globals.inc.php.bak" > \
-    #    "${INSTALL_DIR}/src/globals.inc.php" || return 1
 
     loginfo "Installing Apache httpd configuration..."
     cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
@@ -102,105 +84,22 @@ function do_install {
     logwarning "Open Web GUI with a browser, install a license key, and logout. [ENTER]"
     read userinteraction
 
-    #loginfo "Performing update..."
-    #cd "$INSTALL_DIR" || return 1
-    ## TODO controller handler "autoup" is not working:
-    ##./controller -v -i 1 -u admin -p admin -m autoup -n v1.0 || return 1
-    #logwarning "Open Web GUI with a browser, update to version 1.0, and install all available modules. [ENTER]"
-    #read userinteraction
-    
-    #loginfo "Patching version..."
-    #cp "${INSTALL_DIR}/src/globals.inc.php" "${INSTALL_DIR}/src/globals.inc.php.bak" || return 1
-    #sed \
-    #    -e "s/\"version\" => \"0.9.9-9\",/\"version\" => \"1.0\",/g" \
-    #    "${INSTALL_DIR}/src/globals.inc.php.bak" > \
-    #    "${INSTALL_DIR}/src/globals.inc.php" || return 1
-
     cd "$BASE_DIR" || return 1
     
     if [ -d "$ICINGA_ETC_DIR" ]; then
-        loginfo "Configuring i-doit's Nagios module..."
-        
-        sed \
-            -e "s/%HOST%/$HOST/g" \
-            -e "s/%IDOUTILS_DB_USERNAME%/$IDOUTILS_DB_USERNAME/g" \
-            -e "s/%IDOUTILS_DB_PASSWORD%/$IDOUTILS_DB_PASSWORD/g" \
-            -e "s|%ICINGA_EXPORT_DIR%|$ICINGA_EXPORT_DIR|g" \
-            "${ETC_DIR}/idoit_icinga.sql" > "${TMP_DIR}/idoit_icinga.sql" || return 1
-        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_icinga.sql" || return 1
-        
-        logdebug "Adding user 'icinga'..."
-        sed \
-            -e "s/%USERNAME%/icinga/g" \
-            -e "s/%PASSWORD%/icinga/g" \
-            "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
-        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
+        configureIcinga || return 1
+    fi
 
-        logdebug "Creating symbolic links of Icinga export files..."
-        mkdir -p "$ICINGA_EXPORT_DIR" || return 1
-        chown www-data:www-data -R "$ICINGA_EXPORT_DIR" || return 1
-        "$INSTALL_DIR"/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg "$ICINGA_ETC_DIR"/objects/i-doit_commands.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg "$ICINGA_ETC_DIR"/objects/i-doit_contacts.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostdependencies.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostdependencies.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostescalations.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostescalations.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hostgroups.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostgroups.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/hosts.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hosts.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/servicedependencies.cfg "$ICINGA_ETC_DIR"/objects/i-doit_servicedependencies.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/serviceescalations.cfg "$ICINGA_ETC_DIR"/objects/i-doit_serviceescalations.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/servicegroups.cfg "$ICINGA_ETC_DIR"/objects/i-doit_servicegroups.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/services.cfg "$ICINGA_ETC_DIR"/objects/i-doit_services.cfg || return 1
-        ln -s "$INSTALL_DIR"/icingaexport/objects/timeperiods.cfg "$ICINGA_ETC_DIR"/objects/i-doit_timeperiods.cfg || return 1
-        #ln -s "$INSTALL_DIR"/icingaexport/nagios.cfg "$ICINGA_ETC_DIR"/icinga.cfg
-        # TODO deploy bin/build_icinga_config_from_i-doit.sh as cron job
-        # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
+    if [ -d "/opt/otrs" ]; then
+        configureOTRS || return 1
     fi
     
     if [ -d "/opt/rt4" ]; then
-        loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for RT..."
-        
-        logdebug "Importing configuration..."
-        sed \
-            -e "s/%HOST%/$HOST/g" \
-            -e "s/%USERNAME%/$RT_ADMIN_USERNAME/g" \
-            -e "s/%PASSWORD%/$RT_ADMIN_PASSWORD/g" \
-            "${ETC_DIR}/idoit_rt.sql" > "${TMP_DIR}/idoit_rt.sql" || return 1
-        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_rt.sql" || return 1
-        
-        logdebug "Adding user 'rt'..."
-        sed \
-            -e "s/%USERNAME%/rt/g" \
-            -e "s/%PASSWORD%/rt/g" \
-            "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
-        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
-    fi
-    if [ -d "/opt/otrs" ]; then
-        loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for OTRS..."
-        
-        logdebug "Importing configuration..."
-        sed \
-            -e "s/%HOST%/$HOST/g" \
-            -e "s/%USERNAME%/$OTRS_ADMIN_USERNAME/g" \
-            -e "s/%PASSWORD%/$OTRS_ADMIN_PASSWORD/g" \
-            "${ETC_DIR}/idoit_otrs.sql" > "${TMP_DIR}/idoit_otrs.sql" || return 1
-        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_otrs.sql" || return 1
-        
-        logdebug "Adding user 'otrs'..."
-        sed \
-            -e "s/%USERNAME%/otrs/g" \
-            -e "s/%PASSWORD%/otrs/g" \
-            "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
-        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
+        configureRT || return 1
     fi
     
     if [ -d "/usr/share/ocsinventory-reports" ]; then
-        loginfo "Configuring idoit's module for OCS Inventory NG..."
-        sed \
-            -e "s/%OCS_DB_NAME%/$OCS_DB_NAME/g" \
-            -e "s/%OCS_DB_USERNAME%/$OCS_DB_USERNAME/g" \
-            -e "s/%OCS_DB_PASSWORD%/$OCS_DB_PASSWORD/g" \
-            "${ETC_DIR}/idoit_ocs.sql" > "${TMP_DIR}/idoit_ocs.sql" || return 1
-        executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_ocs.sql" || return 1
+        configureOCS || return 1
     fi
     
     # TODO configure ITGS module
@@ -233,6 +132,11 @@ function installLatest {
     
     mv "$mainPackage" "$TMP_DIR" || return 1
     mv "$updatePackage" "$TMP_DIR" || return 1
+    
+    runSetupScript || return 1
+
+    loginfo "Performing update to latest release..."
+    sudo ./controller -u admin -p admin -i 1 -m autoup -n v1.0.2
 }
 
 function installTrunk {
@@ -245,6 +149,8 @@ function installTrunk {
         logdebug "Performing checkout..."
         svn co http://dev.synetics.de/svn/idoit/trunk . || return 1
     fi
+    
+    runSetupScript || return 1
 }
 
 function installStable {
@@ -257,6 +163,135 @@ function installStable {
         logdebug "Performing checkout..."
         svn co http://dev.synetics.de/svn/idoit/branches/idoit-stable . || return 1
     fi
+    
+    runSetupScript || return 1
+}
+
+function runSetupScript {
+    loginfo "Running setup script..."
+    cd "${INSTALL_DIR}/setup" || return 1
+    {
+        echo "idoit_data"
+        echo "idoit_system"
+        echo "$HOST"
+        echo "$MYSQL_DBA_PASSWORD"
+        echo "Y"
+    } | ./install.sh || return 1
+}
+
+function importDemoDump {
+    loginfo "Importing demo dump..."
+    
+    local mandator_db="idoit_data"
+    logdebug "Mandator database: $mandator_db"
+    
+    local mandator_db="idoit_system"
+    logdebug "System database: $system_db"
+    
+    local mandator_dump="${ETC_DIR}/idoit_data.sql"
+    logdebug "Mandator dump file: $mandator_dump"
+    
+    local system_dump="${ETC_DIR}/idoit_system.sql"
+    logdebug "System dump file: $system_dump"
+    
+    if [ ! -r "$mandator_dump" ]; then
+        lognotice "Mandator dump file $mandator_dump is not accessible. Skip import."
+        return 0
+    fi
+    
+    if [ ! -r "$system_dump" ]; then
+        lognotice "System dump file $system_dump is not accessible. Skip import."
+        return 0
+    fi
+    
+    executeMySQLImport "$mandator_db" "$mandator_dump" || return 1
+    executeMySQLImport "$system_db" "$system_dump" || return 1
+}
+
+function configureIcinga {
+    loginfo "Configuring i-doit's Nagios module..."
+    
+    sed \
+        -e "s/%HOST%/$HOST/g" \
+        -e "s/%IDOUTILS_DB_USERNAME%/$IDOUTILS_DB_USERNAME/g" \
+        -e "s/%IDOUTILS_DB_PASSWORD%/$IDOUTILS_DB_PASSWORD/g" \
+        -e "s|%ICINGA_EXPORT_DIR%|$ICINGA_EXPORT_DIR|g" \
+        "${ETC_DIR}/idoit_icinga.sql" > "${TMP_DIR}/idoit_icinga.sql" || return 1
+    executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_icinga.sql" || return 1
+    
+    logdebug "Adding user 'icinga'..."
+    sed \
+        -e "s/%USERNAME%/icinga/g" \
+        -e "s/%PASSWORD%/icinga/g" \
+        "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
+    executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
+
+    logdebug "Creating symbolic links of Icinga export files..."
+    mkdir -p "$ICINGA_EXPORT_DIR" || return 1
+    chown www-data:www-data -R "$ICINGA_EXPORT_DIR" || return 1
+    "$INSTALL_DIR"/controller -m nagios_export -u icinga -p icinga -i 1 -v -n demo.smartitsm.org || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/commands.cfg "$ICINGA_ETC_DIR"/objects/i-doit_commands.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/contacts.cfg "$ICINGA_ETC_DIR"/objects/i-doit_contacts.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/hostdependencies.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostdependencies.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/hostescalations.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostescalations.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/hostgroups.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hostgroups.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/hosts.cfg "$ICINGA_ETC_DIR"/objects/i-doit_hosts.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/servicedependencies.cfg "$ICINGA_ETC_DIR"/objects/i-doit_servicedependencies.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/serviceescalations.cfg "$ICINGA_ETC_DIR"/objects/i-doit_serviceescalations.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/servicegroups.cfg "$ICINGA_ETC_DIR"/objects/i-doit_servicegroups.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/services.cfg "$ICINGA_ETC_DIR"/objects/i-doit_services.cfg || return 1
+    ln -s "$INSTALL_DIR"/icingaexport/objects/timeperiods.cfg "$ICINGA_ETC_DIR"/objects/i-doit_timeperiods.cfg || return 1
+    #ln -s "$INSTALL_DIR"/icingaexport/nagios.cfg "$ICINGA_ETC_DIR"/icinga.cfg
+    # TODO deploy bin/icinga_build_config_from_i-doit as cron job
+    # TODO deploy ""$INSTALL_DIR"/controller -m nagios -u icinga -p icinga -i 1 -v" to write log files
+}
+
+function configureOCS {
+    loginfo "Configuring idoit's module for OCS Inventory NG..."
+    sed \
+        -e "s/%OCS_DB_NAME%/$OCS_DB_NAME/g" \
+        -e "s/%OCS_DB_USERNAME%/$OCS_DB_USERNAME/g" \
+        -e "s/%OCS_DB_PASSWORD%/$OCS_DB_PASSWORD/g" \
+        "${ETC_DIR}/idoit_ocs.sql" > "${TMP_DIR}/idoit_ocs.sql" || return 1
+    executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_ocs.sql" || return 1
+}
+
+function configureRT {
+    loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for RT..."
+    
+    logdebug "Importing configuration..."
+    sed \
+        -e "s/%HOST%/$HOST/g" \
+        -e "s/%USERNAME%/$RT_ADMIN_USERNAME/g" \
+        -e "s/%PASSWORD%/$RT_ADMIN_PASSWORD/g" \
+        "${ETC_DIR}/idoit_rt.sql" > "${TMP_DIR}/idoit_rt.sql" || return 1
+    executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_rt.sql" || return 1
+    
+    logdebug "Adding user 'rt'..."
+    sed \
+        -e "s/%USERNAME%/rt/g" \
+        -e "s/%PASSWORD%/rt/g" \
+        "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
+    executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
+}
+
+function configureOTRS {
+    loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for OTRS..."
+    
+    logdebug "Importing configuration..."
+    sed \
+        -e "s/%HOST%/$HOST/g" \
+        -e "s/%USERNAME%/$OTRS_ADMIN_USERNAME/g" \
+        -e "s/%PASSWORD%/$OTRS_ADMIN_PASSWORD/g" \
+        "${ETC_DIR}/idoit_otrs.sql" > "${TMP_DIR}/idoit_otrs.sql" || return 1
+    executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_otrs.sql" || return 1
+    
+    logdebug "Adding user 'otrs'..."
+    sed \
+        -e "s/%USERNAME%/otrs/g" \
+        -e "s/%PASSWORD%/otrs/g" \
+        "${ETC_DIR}/idoit_user.sql" > "${TMP_DIR}/idoit_user.sql" || return 1
+    executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_user.sql" || return 1
 }
 
 ## Installs homepage configuration.

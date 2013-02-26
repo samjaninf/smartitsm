@@ -143,6 +143,16 @@ if [ -z "${RT_DB_PASSWORD+1}" ]; then
     RT_DB_PASSWORD="rt_pass"
 fi
 
+## i-doit DB user:
+if [ -z "${IDOIT_DB_USERNAME+1}" ]; then
+    IDOIT_DB_USERNAME="idoit"
+fi
+
+## i-doit DB user's password:
+if [ -z "${IDOIT_DB_PASSWORD+1}" ]; then
+    IDOIT_DB_PASSWORD="idoit"
+fi
+
 
 ##
 ## About this tool
