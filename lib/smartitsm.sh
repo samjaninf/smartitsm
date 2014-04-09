@@ -26,17 +26,17 @@
 function process {
     for conf_file in "$CONFIG_DIR"/*.sh; do
         includeShellScript "$conf_file" || return 1
-        
+
         considerModule
         if [ "$?" -eq 0 ]; then
             logdebug "Skip module."
             continue
         fi
-        
+
         lognotice "Installing module '$TITLE' ($DESCRIPTION)..."
-        
+
         local status=0
-        
+
         if [ "$RUN_INSTALL" -eq 1 ]; then
             do_install
             status="$?"
@@ -48,34 +48,34 @@ function process {
             printUsage
             return 1
         fi
-        
+
         if [ "$status" -gt 0 ]; then
             logerror "Installation failed."
             return 1
         fi
         logdebug "Module '$TITLE' installed."
     done
-    
+
     return 0
 }
 
 ## Checks whether module will be considered.
 function considerModule {
     loginfo "Checking whether module will be considered..."
-    
+
     logdebug "Module: $MODULE"
-    
+
     if [ -z "$MODULE_SELECTION" ]; then
         logdebug "No specific module selected. Assume all modules."
         MODULE_SELECTION="all"
         return 1
     fi
-    
+
     if [ "$MODULE_SELECTION" == "all" ]; then
         logdebug "All modules selected."
         return 1
     fi
-    
+
     IFS=","
     for module in $MODULE_SELECTION; do
         if [ "$module" == "$MODULE" ]; then
@@ -84,7 +84,7 @@ function considerModule {
         fi
     done
     unset IFS
-    
+
     logdebug "Module will not be considered."
     return 0
 }
@@ -113,28 +113,31 @@ function installPackage {
     else
         logdebug "Installation was successful."
     fi
-    
+
     return "$status"
 }
 
 ## Upgrades all distribution packages.
 function upgradeSystem {
     loginfo "Upgrading system..."
-    
+
     logdebug "Updating..."
     apt-get update -y || return 1
-    
+
     logdebug "Upgrading..."
     apt-get upgrade -y || return 1
-    
+
     logdebug "Dist-upgrading..."
     apt-get dist-upgrade -y || return 1
-    
+
     logdebug "Cleaning up..."
     apt-get clean -y || return 1
-    
+
+    logdebug "Removing unused packages..."
+    apt-get autoremove -y || return 1
+
     logdebug "System upgraded."
-    
+
     return 0
 }
 
@@ -150,7 +153,7 @@ function download {
 ##   $1 Space-separated list of modules
 function installCPANmodule {
     loginfo "Installing Perl module from CPAN..."
-    cpan -i "$1"
+    cpan -i -n "$1"
     local status="$?"
     if [ "$status" -gt 0 ]; then
         logerror "Installation of module '$1' from CPAN failed."
@@ -165,7 +168,7 @@ function installCPANmodule {
 function executeMySQLQuery {
     loginfo "Executing SQL query with MySQL client..."
     logdebug "SQL query: $1"
-    mysql --user="$MYSQL_DBA_USERNAME" --password="$MYSQL_DBA_PASSWORD" -e "$1"
+    mysql --user="$MARIADB_DBA_USERNAME" --password="$MARIADB_DBA_PASSWORD" -e "$1"
     local status="$?"
     if [ "$status" -gt 0 ]; then
         logwarning "MySQL client returned with error."
@@ -182,7 +185,7 @@ function executeMySQLImport {
     loginfo "Executing SQL import with MySQL client..."
     logdebug "Database: $1"
     logdebug "SQL file: $2"
-    mysql --user="$MYSQL_DBA_USERNAME" --password="$MYSQL_DBA_PASSWORD" "$1" < "$2"
+    mysql --user="$MARIADB_DBA_USERNAME" --password="$MARIADB_DBA_PASSWORD" "$1" < "$2"
     local status="$?"
     if [ "$status" -gt 0 ]; then
         logwarning "MySQL client returned with error."
@@ -204,13 +207,13 @@ function fetchLogo {
     loginfo "Fetching module logo..."
 
     logdebug "URL: $1"
-    
+
     local extension="$2"
     if [ -z "$extension" ]; then
         extension="png"
     fi
     logdebug "File extension: $extension"
-    
+
     wget "$1" -O "${LOGO_DIR}/${MODULE}_logo.$extension"
     local status="$?"
     if [ "$status" -gt 0 ]; then
@@ -218,7 +221,7 @@ function fetchLogo {
         logerror "Fetching logo for module '$MODULE' failed."
         return "$status"
     fi
-    
+
     if [ "$extension" != "png" ]; then
         logdebug "Converting logo from $extension to png..."
         convert "${LOGO_DIR}/${MODULE}_logo.$extension" "${LOGO_DIR}/${MODULE}_logo.png"
@@ -230,22 +233,22 @@ function fetchLogo {
             return "$status"
         fi
     fi
-    
+
     return 0
 }
 
 function listModules {
     loginfo "Listing available modules..."
-    
+
     AVAILABLE_MODULES=""
-    
+
     for conf_file in "$CONFIG_DIR"/*.sh; do
         includeShellScript "$conf_file" || return 1
-        
+
         if [ -n "$AVAILABLE_MODULES" ]; then
             AVAILABLE_MODULES="${AVAILABLE_MODULES}\n"
         fi
-        
+
         local tabs="\t\t"
         local length="${#MODULE}"
         if [ "$length" -le 3 ]; then
@@ -253,21 +256,21 @@ function listModules {
         elif [ "$length" -ge 12 ]; then
             tabs="\t"
         fi
-        
+
         AVAILABLE_MODULES="${AVAILABLE_MODULES}    ${MODULE}${tabs}${TITLE} (${DESCRIPTION}) [priority: ${PRIORITY}]"
     done
-    
+
     if [ -z "$AVAILABLE_MODULES" ]; then
         AVAILABLE_MODULES="    no modules available"
     fi
-        
+
     return 0
 }
 
 ## Prints global usage
 function printUsage {
     loginfo "Printing global usage..."
-    
+
     listModules || return 1
 
     prntLn "Usage: '$BASE_NAME [output] [options|information]'"

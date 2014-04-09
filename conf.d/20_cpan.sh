@@ -44,8 +44,12 @@ function do_install {
     installCPANmodule "CPAN" || return 1
     installCPANmodule "YAML" || return 1
     installCPANmodule "YAML::XS" || return 1
+    installCPANmodule "Test::Output" || return 1
     installCPANmodule "Test::Pod" || return 1
     installCPANmodule "Test::Pod::Coverage" || return 1
+    installCPANmodule "Test::CPAN::Meta::JSON" || return 1
+    installCPANmodule "Module::Install::AuthorTests" || return 1
+    installCPANmodule "Module::Install::ExtraTests" || return 1
     installCPANmodule "GD::Text" || return 1
     installCPANmodule "Moose" || return 1
     installCPANmodule "XML::Entities" || return 1
@@ -76,6 +80,7 @@ function do_install {
     installCPANmodule "Crypt::SSLeay" || return 1
     installCPANmodule "GD::Graph" || return 1
     installCPANmodule "Net::LDAP" || return 1
+    installCPANmodule "Crypt::Eksblowfish::Bcrypt" || return 1
 
     return 0
 }

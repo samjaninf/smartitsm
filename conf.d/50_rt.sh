@@ -40,12 +40,12 @@ PRIORITY="50"
 ## Installs this module.
 function do_install {
     cd "$TMP_DIR" || return 1
-    
+
     loginfo "Installing RT..."
     download "http://download.bestpractical.com/pub/rt/release/rt-4.0.10.tar.gz" || return 1
     tar xzf rt-4.0.10.tar.gz || return 1
     cd rt-4.0.10/ || return 1
-    ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate --with-db-dba="$MYSQL_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
+    ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate --with-db-dba="$MARIADB_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
     ## Dry run: Do not abort after this command:
     make testdeps
     make fixdeps || return 1
@@ -57,7 +57,7 @@ function do_install {
     # Finally, run last test:
     make testdeps || return 1
     make install || return 1
-    echo "$MYSQL_DBA_PASSWORD" | make initialize-database || return 1
+    echo "$MARIADB_DBA_PASSWORD" | make initialize-database || return 1
     cd .. || return 1
 
     installCPANmodule "RT::Authen::ExternalAuth" || return 1
@@ -68,11 +68,11 @@ function do_install {
 
     installCPANmodule "RT::Extension::ReferenceIDoitObjects" || return 1
     echo "$RT_DB_PASSWORD" | /opt/rt4/sbin/rt-setup-database --action insert --datafile /opt/rt4/local/plugins/RT-Extension-ReferenceIDoitObjects/etc/initialdata || return 1
-    
+
     cd "$BASE_DIR" || return 1
-    
+
     loginfo "Configuring RT..."
-    echo "# Any configuration directives you include  here will override 
+    echo "# Any configuration directives you include  here will override
 # RT's default configuration file, RT_Config.pm
 #
 # To include a directive here, just copy the equivalent statement
@@ -184,18 +184,18 @@ Set(%MandatoryFields, (
 
     loginfo "Performing clean restart..."
     "$BIN_DIR/rt_clean_cache_apache_restart.sh" || return 1
-    
+
     do_www_install || return 1
-    
+
     return 0
 }
 
 ## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
-    
+
     fetchLogo "http://bestpractical.com/images/bpslogo.png"
-    
+
     loginfo "Installing module configuration..."
     echo "<?php
 
@@ -215,7 +215,7 @@ function do_www_install {
 
 ?>
 " > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
-    
+
     return 0
 }
 

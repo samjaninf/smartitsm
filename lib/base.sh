@@ -202,7 +202,7 @@ function printVersion {
     loginfo "Printing some information about this script..."
 
     prntLn "$PROJECT_SHORT_DESC $PROJECT_VERSION"
-    prntLn "Copyright (C) 2012 $PROJECT_COPYRIGHT"
+    prntLn "Copyright (C) 2014 $PROJECT_COPYRIGHT"
     prntLn "This program comes with ABSOLUTELY NO WARRANTY."
     prntLn "This is free software, and you are welcome to redistribute it"
     prntLn "under certain conditions. Type '--license' for details."

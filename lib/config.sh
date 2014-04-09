@@ -33,14 +33,19 @@ if [ -z "${HOST+1}" ]; then
     HOST="demo.smartitsm.org"
 fi
 
-## MySQL database administrator:
-if [ -z "${MYSQL_DBA_USERNAME+1}" ]; then
-    MYSQL_DBA_USERNAME="root"
+## Hostname:
+if [ -z "${HOST+1}" ]; then
+    FQDN="demo.smartitsm.org"
 fi
 
-## MySQL database administrator's password:
-if [ -z "${MYSQL_DBA_PASSWORD+1}" ]; then
-    MYSQL_DBA_PASSWORD="root"
+## MariaDB database administrator:
+if [ -z "${MARIADB_DBA_USERNAME+1}" ]; then
+    MARIADB_DBA_USERNAME="root"
+fi
+
+## MariaDB database administrator's password:
+if [ -z "${MARIADB_DBA_PASSWORD+1}" ]; then
+    MARIADB_DBA_PASSWORD="root"
 fi
 
 ## LDAP admin's password:
@@ -128,7 +133,7 @@ if [ -z "${RT_ADMIN_USERNAME+1}" ]; then
     RT_ADMIN_USERNAME="root"
 fi
 
-## MySQL admin user's password:
+## RT admin user's password:
 if [ -z "${RT_ADMIN_PASSWORD+1}" ]; then
     RT_ADMIN_PASSWORD="password"
 fi
@@ -138,7 +143,7 @@ if [ -z "${RT_DB_USERNAME+1}" ]; then
     RT_DB_USERNAME="rt_user"
 fi
 
-## MySQL DB user's password:
+## RT DB user's password:
 if [ -z "${RT_DB_PASSWORD+1}" ]; then
     RT_DB_PASSWORD="rt_pass"
 fi
@@ -170,7 +175,7 @@ PROJECT_COPYRIGHT="synetics GmbH <http://www.i-doit.com/>"
 ## Project website
 PROJECT_WEBSITE="http://www.smartitsm.org/demo"
 ## Version
-PROJECT_VERSION="0.1"
+PROJECT_VERSION="0.2"
 
 
 ##

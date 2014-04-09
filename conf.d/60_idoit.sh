@@ -55,7 +55,7 @@ fi
 function do_install {
     loginfo "Creating destination directory..."
     mkdir -p "$INSTALL_DIR" || return 1
-    
+
     # TODO make decision configurable:
     installLatest || return 1
     #installTrunk || return 1
@@ -63,7 +63,7 @@ function do_install {
 
     chown www-data:www-data -R "$INSTALL_DIR" || return 1
     chmod og+rw -R "$INSTALL_DIR" || return 1
-    
+
     loginfo "Patching configuration file..."
     cp "${INSTALL_DIR}/src/config.inc.php" "${INSTALL_DIR}/src/config.inc.php.bak" || return 1
     # fix web root; increase session timer; enable admin center:
@@ -79,14 +79,14 @@ function do_install {
     loginfo "Installing Apache httpd configuration..."
     cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
     restartWebServer || return 1
-    
+
     loginfo "Installing license..."
     # TODO fetch and install license file,
     logwarning "Open Web GUI with a browser, install a license key, and logout. [ENTER]"
     read userinteraction
 
     cd "$BASE_DIR" || return 1
-    
+
     if [ -d "$ICINGA_ETC_DIR" ]; then
         configureIcinga || return 1
     fi
@@ -94,19 +94,19 @@ function do_install {
     if [ -d "/opt/otrs" ]; then
         configureOTRS || return 1
     fi
-    
+
     if [ -d "/opt/rt4" ]; then
         configureRT || return 1
     fi
-    
+
     if [ -d "/usr/share/ocsinventory-reports" ]; then
         configureOCS || return 1
     fi
-    
+
     # TODO configure ITGS module
-    
+
     # TODO configure LDAP module
-    
+
     do_www_install || return 1
 
     return 0
@@ -114,26 +114,26 @@ function do_install {
 
 function installLatest {
     loginfo "Installation latest stable version from local file..."
-    
+
     local mainPackage="idoit-1.0.zip"
     local updatePackage="idoit-1.0.2-update.zip"
-    
+
     if [ ! -r "${INSTALL_DIR}/${mainPackage}" ]; then
         logwarning "Main package $mainPackage is missing. Please copy it to $INSTALL_DIR and press [ENTER]."
         read userinteraction
     fi
-    
+
     if [ ! -r "${INSTALL_DIR}/${updatePackage}" ]; then
         logwarning "Main package $updatePackage is missing. Please copy it to $INSTALL_DIR and press [ENTER]."
         read userinteraction
     fi
-    
+
     unzip "$mainPackage" || return 1
     unzip -o "$updatePackage" || return 1
-    
+
     mv "$mainPackage" "$TMP_DIR" || return 1
     mv "$updatePackage" "$TMP_DIR" || return 1
-    
+
     runSetupScript || return 1
 
     loginfo "Performing update to latest release..."
@@ -150,7 +150,7 @@ function installTrunk {
         logdebug "Performing checkout..."
         svn co http://dev.synetics.de/svn/idoit/trunk . || return 1
     fi
-    
+
     runSetupScript || return 1
 }
 
@@ -164,7 +164,7 @@ function installStable {
         logdebug "Performing checkout..."
         svn co http://dev.synetics.de/svn/idoit/branches/idoit-stable . || return 1
     fi
-    
+
     runSetupScript || return 1
 }
 
@@ -175,43 +175,43 @@ function runSetupScript {
         echo "idoit_data"
         echo "idoit_system"
         echo "$HOST"
-        echo "$MYSQL_DBA_PASSWORD"
+        echo "$MARIADB_DBA_PASSWORD"
         echo "Y"
     } | ./install.sh || return 1
 }
 
 function importDemoDump {
     loginfo "Importing demo dump..."
-    
+
     local mandator_db="idoit_data"
     logdebug "Mandator database: $mandator_db"
-    
+
     local mandator_db="idoit_system"
     logdebug "System database: $system_db"
-    
+
     local mandator_dump="${ETC_DIR}/idoit_data.sql"
     logdebug "Mandator dump file: $mandator_dump"
-    
+
     local system_dump="${ETC_DIR}/idoit_system.sql"
     logdebug "System dump file: $system_dump"
-    
+
     if [ ! -r "$mandator_dump" ]; then
         lognotice "Mandator dump file $mandator_dump is not accessible. Skip import."
         return 0
     fi
-    
+
     if [ ! -r "$system_dump" ]; then
         lognotice "System dump file $system_dump is not accessible. Skip import."
         return 0
     fi
-    
+
     executeMySQLImport "$mandator_db" "$mandator_dump" || return 1
     executeMySQLImport "$system_db" "$system_dump" || return 1
 }
 
 function configureIcinga {
     loginfo "Configuring i-doit's Nagios module..."
-    
+
     # TODO Table columns changed in version 1.0!
     sed \
         -e "s/%HOST%/$HOST/g" \
@@ -220,7 +220,7 @@ function configureIcinga {
         -e "s|%ICINGA_EXPORT_DIR%|$ICINGA_EXPORT_DIR|g" \
         "${ETC_DIR}/idoit_icinga.sql" > "${TMP_DIR}/idoit_icinga.sql" || return 1
     executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_icinga.sql" || return 1
-    
+
     logdebug "Adding user 'icinga'..."
     sed \
         -e "s/%USERNAME%/icinga/g" \
@@ -257,7 +257,7 @@ function configureOCS {
         -e "s/%OCS_DB_PASSWORD%/$OCS_DB_PASSWORD/g" \
         "${ETC_DIR}/idoit_ocs.sql" > "${TMP_DIR}/idoit_ocs.sql" || return 1
     executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_ocs.sql" || return 1
-    
+
     loginfo "Performing initial OCS Inventory NG import..."
     cd "$INSTALL_DIR" || return 1
     ./controller -v -u admin -p admin -i 1 -m ocs
@@ -265,7 +265,7 @@ function configureOCS {
 
 function configureRT {
     loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for RT..."
-    
+
     logdebug "Importing configuration..."
     sed \
         -e "s/%HOST%/$HOST/g" \
@@ -273,7 +273,7 @@ function configureRT {
         -e "s/%PASSWORD%/$RT_ADMIN_PASSWORD/g" \
         "${ETC_DIR}/idoit_rt.sql" > "${TMP_DIR}/idoit_rt.sql" || return 1
     executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_rt.sql" || return 1
-    
+
     logdebug "Adding user 'rt'..."
     sed \
         -e "s/%USERNAME%/rt/g" \
@@ -284,7 +284,7 @@ function configureRT {
 
 function configureOTRS {
     loginfo "Configuring idoit's module 'Trouble Ticketing Systems (TTS)' for OTRS..."
-    
+
     logdebug "Importing configuration..."
     sed \
         -e "s/%HOST%/$HOST/g" \
@@ -292,7 +292,7 @@ function configureOTRS {
         -e "s/%PASSWORD%/$OTRS_ADMIN_PASSWORD/g" \
         "${ETC_DIR}/idoit_otrs.sql" > "${TMP_DIR}/idoit_otrs.sql" || return 1
     executeMySQLImport "idoit_data" "${TMP_DIR}/idoit_otrs.sql" || return 1
-    
+
     logdebug "Adding user 'otrs'..."
     sed \
         -e "s/%USERNAME%/otrs/g" \
@@ -304,9 +304,9 @@ function configureOTRS {
 ## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
-    
+
     fetchLogo "http://www.smartitsm.org/_media/i-doit/i-doit_logo.png"
-    
+
     loginfo "Installing module configuration..."
     echo "<?php
 
@@ -326,7 +326,7 @@ function do_www_install {
 
 ?>
 " > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
-    
+
     return 0
 }
 

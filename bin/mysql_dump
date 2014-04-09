@@ -35,13 +35,13 @@ if [ -r "$LOCAL_CONFIGURATION" ]; then
     source "$LOCAL_CONFIGURATION"
 fi
 
-USERNAME="$MYSQL_DBA_USERNAME"
-PASSWORD="$MYSQL_DBA_PASSWORD"
+USERNAME="$MARIADB_DBA_USERNAME"
+PASSWORD="$MARIADB_DBA_PASSWORD"
 HOSTNAME="localhost"
 
 DATE=`date +%F_%H_%M_%S`
-TARGET="${ETC_DIR}/mysql_dump_${DATE}.sql.gz"                                                                                                                                                                                           
-                                                                                                                                                                                                                                             
-mysqldump --user="$USERNAME" --password="$PASSWORD" -h "$HOSTNAME" --all-databases | gzip -c > "$TARGET"                                                                                                                                     
-                                                                                                                                                                                                                                             
+TARGET="${ETC_DIR}/mysql_dump_${DATE}.sql.gz"
+
+mysqldump --user="$USERNAME" --password="$PASSWORD" -h "$HOSTNAME" --all-databases | gzip -c > "$TARGET"
+
 exit "$?"

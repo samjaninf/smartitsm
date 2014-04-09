@@ -20,11 +20,12 @@
 
 ## OTRS
 
+OTRS_VERSION="3.3.6"
 
 MODULE="otrs"
 TITLE="Open-source Ticket Request System (OTRS)"
 DESCRIPTION="issue tracking system"
-VERSIONS="OTRS Help Desk 3.2.2, ReferenceIDoitObjects 0.5 (closed beta)"
+VERSIONS="OTRS Help Desk $OTRS_VERSION, ReferenceIDoitObjects 0.6 (closed beta)"
 URL="/otrs/index.pl"
 IT_STACK="http://www.smartitsm.org/it_stack/otrs"
 PRIORITY="50"
@@ -34,11 +35,11 @@ PRIORITY="50"
 function do_install {
     loginfo "Installing OTRS Help Desk..."
     cd "$TMP_DIR" || return 1
-    download http://ftp.otrs.org/pub/otrs/otrs-3.2.2.tar.bz2 || return 1
+    download http://ftp.otrs.org/pub/otrs/otrs-"$OTRS_VERSION".tar.bz2 || return 1
     logdebug "Extracting tarball..."
-    tar xjf otrs-3.2.2.tar.bz2 || return 1
+    tar xjf otrs-"$OTRS_VERSION".tar.bz2 || return 1
     logdebug "Moving files to destination directory..."
-    mv otrs-3.2.2/ /opt/otrs/ || return 1
+    mv otrs-"$OTRS_VERSION"/ /opt/otrs/ || return 1
     logdebug "Checking modules..."
     perl /opt/otrs/bin/otrs.CheckModules.pl || return 1
     logdebug "Adding system user..."
@@ -51,10 +52,13 @@ function do_install {
     perl -cw /opt/otrs/bin/cgi-bin/index.pl || return 1
     perl -cw /opt/otrs/bin/cgi-bin/customer.pl || return 1
     perl -cw /opt/otrs/bin/otrs.PostMaster.pl || return 1
-    /opt/otrs/bin/otrs.SetPermissions.pl --otrs-user=otrs --web-user=www-data --otrs-group=www-data --web-group=www-data /opt/otrs || return 1
     logdebug "Installing Apache httpd configuration file..."
-    ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf.d/otrs.config || return 1
+    ln -s /opt/otrs/scripts/apache2-httpd.include.conf /etc/apache2/conf-available/otrs.conf || return 1
+    a2enconf otrs || return 1
     restartWebServer || return 1
+    logdebug "Setting file permissions..."
+    /opt/otrs/bin/otrs.SetPermissions.pl --otrs-user=otrs --web-user=www-data --otrs-group=www-data --web-group=www-data /opt/otrs || return 1
+    logdebug "Configuring database..."
     executeMySQLQuery "create database $OTRS_DB_NAME charset utf8;" || return 1
     executeMySQLImport "$OTRS_DB_NAME" "/opt/otrs/scripts/database/otrs-schema.mysql.sql" || return 1
     executeMySQLImport "$OTRS_DB_NAME" "/opt/otrs/scripts/database/otrs-initial_insert.mysql.sql" || return 1
@@ -69,16 +73,27 @@ function do_install {
         -e "s/\$Self->{DatabasePw} = 'some-pass';/\$Self->{DatabasePw} = '$OTRS_DB_PASSWORD';/g" \
         /opt/otrs/Kernel/Config.pm.bak > /opt/otrs/Kernel/Config.pm || return 1
     /opt/otrs/bin/otrs.CheckDB.pl || return 1
-    # TODO install cron jobs
+    logdebug "Activating cron jobs and scheduler..."
+    cd var/cron
+    for foo in *.dist; do cp $foo `basename $foo .dist`; done
+    logdebug "Setting file permissions (again)..."
+    /opt/otrs/bin/otrs.SetPermissions.pl --otrs-user=otrs --web-user=www-data --otrs-group=www-data --web-group=www-data /opt/otrs || return 1
+    sudo -u otrs /opt/otrs/bin/Cron.sh start
+    cp /opt/otrs/scripts/otrs-scheduler-linux /opt/otrs/scripts/otrs-scheduler-linux.bak
+    sed \
+        -e "s/User=otrs/User=otrs/g" \
+        -e "s/Group=otrs/Group=www-data/g" \
+        /opt/otrs/scripts/otrs-scheduler-linux.bak > /opt/otrs/scripts/otrs-scheduler-linux || return 1
+    ln -s /opt/otrs/scripts/otrs-scheduler-linux /etc/init.d/
+    service otrs-scheduler-linux restart
     # TODO configure mail system
-    # TODO configure scheduler (optional)
-    
+
     installReferenceIDoitObjects || return 1
-    
+
     cd "$BASE_DIR" || return 1
-    
+
     do_www_install || return 1
-    
+
     return 0
 }
 
@@ -86,14 +101,14 @@ function do_install {
 function installReferenceIDoitObjects {
     loginfo "Installing OTRS-Extension-ReferenceIDoitObjects..."
     cd "$TMP_DIR" || return 1
-    local tarball="OTRS-Extension-ReferenceIDoitObjects-0.5.tar.gz"
+    local tarball="OTRS-Extension-ReferenceIDoitObjects-0.6.tar.gz"
     if [ ! -r "$TMP_DIR/$tarball" ]; then
         lognotice "Please copy $tarball to $TMP_DIR and press [ENTER]. To skip the installation just ignore this."
         read userinteraction
     fi
     if [ -r "$TMP_DIR/$tarball" ]; then
         tar xzf "$tarball" || return 1
-        /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.5/ReferenceIDoitObjects-0.5.opm || return 1
+        /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.6/ReferenceIDoitObjects-0.6.opm || return 1
         restartWebServer || return 1
         # TODO configure extension, add and configure dynamic fields
     fi
@@ -102,9 +117,9 @@ function installReferenceIDoitObjects {
 ## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
-    
+
     fetchLogo "http://www.otrs.com/fileadmin/templates/skins/skin_otrs/css/images/logo.gif" "gif"
-    
+
     loginfo "Installing module configuration..."
     echo "<?php
 
@@ -124,7 +139,7 @@ function do_www_install {
 
 ?>
 " > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
-    
+
     return 0
 }
 

@@ -13,17 +13,17 @@ The demo system is part of our _smartITSM_ initiative. The initiative stands for
 
 Each tool is encapsulated in a module. Currently, the demo system supports the following tools:
 
-*   **i-doit** v0.9.9-9 pro
+*   **i-doit** v1.3 pro
 *   **Icinga** 1.7.1, Icinga-Web 1.7.2, IDOUtils 1.7.1, Nagios Plugins 1.4.15, PNP4Nagios 0.6.18
 *   **OCS Inventory NG** 2.0.5, OCS Inventory NG Unix Agent 2.0.5
-*   **OTRS Help Desk** 3.1.11, ReferenceIDoitObjects 0.5 (closed beta)
+*   **OTRS Help Desk** 3.3.6, ReferenceIDoitObjects 0.6 (closed beta)
 *   **Request Tracker (RT)** 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects
 
 
 ##  Requirements
 
-*   Ubuntu 12.04 LTS
-*   super user (`root`) rights
+*   Ubuntu 13.10
+*   Super user (`root`) rights
 
 
 ##  Download
@@ -78,14 +78,14 @@ The local configuration file is located under `etc/config.sh`. There is a defaul
 To install all available modules just use the following command:
 
     bin/smartitsm --install
-    
+
 If you prefer to select one or more modules use this:
 
     bin/smartitsm --install --module MODULE1,MODULE2,MODULE3
 
 Notice: Ordering is done by the modules' priorities. Each module has its own script file located under `conf.d/` with a priority number as prefix, e. g. `50_icinga.sh`.
 
-    
+
 ### Upgrade Modules
 
 Upgrading modules is currently not implemented yet.
@@ -123,7 +123,7 @@ Your contribution is appreciated! Please, [read more about it at our website](ht
 
 ##   Copyright and License
 
-Copyright (C) 2012 [synetics GmbH](http://www.i-doit.com/)
+Copyright (C) 2014 [synetics GmbH](http://www.i-doit.com/)
 
 This software comes with ABSOLUTELY NO WARRANTY. For details, see the enclosed file COPYING for license information (AGPL). If you did not receive this file, see <http://www.gnu.org/licenses/agpl.txt>.
 
