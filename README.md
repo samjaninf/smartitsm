@@ -112,13 +112,12 @@ Your contribution is appreciated! Please, [read more about it at our website](ht
 
 ...a.k.a. Roadmap
 
-*   upgrade routines
-*   remove routines
-*   support for other GNU/Linux distributions
-*   save state for better resuming
-*   auto-create credentials and save them
-*   apply log level to almost every used command
-*   switch to MariaDB
+*   Implement upgrade routines
+*   Implement remove routines
+*   Add support for other GNU/Linux distributions
+*   Save state for better resuming
+*   Auto-create credentials and save them
+*   Apply log level to almost every used command
 
 
 ##   Copyright and License

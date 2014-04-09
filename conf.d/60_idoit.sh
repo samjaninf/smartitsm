@@ -2,7 +2,7 @@
 
 
 ## smartITSM Demo System
-## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+## Copyright (C) 2014 synetics GmbH <http://www.smartitsm.org/>
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as
@@ -24,11 +24,11 @@
 MODULE="idoit"
 TITLE="i-doit pro"
 DESCRIPTION="CMDB and IT documentation"
-VERSIONS="i-doit pro 1.0.2"
+LATEST="1.3"
+VERSIONS="i-doit pro $LATEST"
 URL="/i-doit/"
 IT_STACK="http://www.smartitsm.org/it_stack/i-doit"
 PRIORITY="60"
-LATEST="1.0.2"
 
 
 ##
@@ -56,128 +56,77 @@ function do_install {
     loginfo "Creating destination directory..."
     mkdir -p "$INSTALL_DIR" || return 1
 
-    # TODO make decision configurable:
-    installLatest || return 1
-    #installTrunk || return 1
-    #installStable || return 1
+    loginfo "Installing from local file..."
+
+    local distribution="idoit-$LATEST.zip"
+
+    if [ ! -r "${INSTALL_DIR}/${distribution}" ]; then
+        logwarning "Main package $distribution is missing. Please copy it to $INSTALL_DIR and press [ENTER]."
+        read userinteraction
+    fi
+
+    unzip "$distribution" || return 1
+
+    mv "$distribution" "$TMP_DIR" || return 1
+
+    #loginfo "Running setup script..."
+    #cd "${INSTALL_DIR}/setup" || return 1
+    #{
+    #    echo "idoit_data"
+    #    echo "idoit_system"
+    #    echo "$HOST"
+    #    echo "$MARIADB_DBA_PASSWORD"
+    #    echo "Y"
+    #} | ./install.sh || return 1
 
     chown www-data:www-data -R "$INSTALL_DIR" || return 1
-    chmod og+rw -R "$INSTALL_DIR" || return 1
+    find . -type d -name \* -exec chmod 775 {} \;
+    find . -type f -exec chmod 664 {} \;
 
-    loginfo "Patching configuration file..."
-    cp "${INSTALL_DIR}/src/config.inc.php" "${INSTALL_DIR}/src/config.inc.php.bak" || return 1
+    #loginfo "Patching configuration file..."
+    #cp "${INSTALL_DIR}/src/config.inc.php" "${INSTALL_DIR}/src/config.inc.php.bak" || return 1
     # fix web root; increase session timer; enable admin center:
     # TODO configure SMTP:
     #   -e "s/\"smtp-host\"  => \"\",/\"smtp-host\"  => \"\",/g" \
-    sed \
-        -e "s/\"www_dir\"       => \"\/\",/\"www_dir\"       => \"$URL\",/g" \
-        -e "s/\"sess_time\"     => 600,/\"sess_time\"     => 86400,/g" \
-        -e "s/\"admin\" => \"\",/\"admin\" => \"admin\",/g" \
-        "${INSTALL_DIR}/src/config.inc.php.bak" > \
-        "${INSTALL_DIR}/src/config.inc.php" || return 1
+    #sed \
+    #    -e "s/\"www_dir\"       => \"\/\",/\"www_dir\"       => \"$URL\",/g" \
+    #    -e "s/\"sess_time\"     => 600,/\"sess_time\"     => 86400,/g" \
+    #    -e "s/\"admin\" => \"\",/\"admin\" => \"admin\",/g" \
+    #    "${INSTALL_DIR}/src/config.inc.php.bak" > \
+    #    "${INSTALL_DIR}/src/config.inc.php" || return 1
 
     loginfo "Installing Apache httpd configuration..."
-    cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf.d/ || return 1
+    cp "${ETC_DIR}/${MODULE}.conf" /etc/apache2/conf-available/ || return 1
+    a2enconf "$MODULE"
     restartWebServer || return 1
 
-    loginfo "Installing license..."
-    # TODO fetch and install license file,
-    logwarning "Open Web GUI with a browser, install a license key, and logout. [ENTER]"
+    loginfo "Running setup..."
+    logwarning "Open Web GUI with a browser and run the setup. Then press [ENTER]."
     read userinteraction
 
     cd "$BASE_DIR" || return 1
 
-    if [ -d "$ICINGA_ETC_DIR" ]; then
-        configureIcinga || return 1
-    fi
+    #if [ -d "$ICINGA_ETC_DIR" ]; then
+    #    configureIcinga || return 1
+    #fi
 
-    if [ -d "/opt/otrs" ]; then
-        configureOTRS || return 1
-    fi
+    #if [ -d "/opt/otrs" ]; then
+    #    configureOTRS || return 1
+    #fi
 
-    if [ -d "/opt/rt4" ]; then
-        configureRT || return 1
-    fi
+    #if [ -d "/opt/rt4" ]; then
+    #    configureRT || return 1
+    #fi
 
-    if [ -d "/usr/share/ocsinventory-reports" ]; then
-        configureOCS || return 1
-    fi
-
-    # TODO configure ITGS module
+    #if [ -d "/usr/share/ocsinventory-reports" ]; then
+    #    configureOCS || return 1
+    #fi
 
     # TODO configure LDAP module
 
     do_www_install || return 1
 
     return 0
-}
-
-function installLatest {
-    loginfo "Installation latest stable version from local file..."
-
-    local mainPackage="idoit-1.0.zip"
-    local updatePackage="idoit-1.0.2-update.zip"
-
-    if [ ! -r "${INSTALL_DIR}/${mainPackage}" ]; then
-        logwarning "Main package $mainPackage is missing. Please copy it to $INSTALL_DIR and press [ENTER]."
-        read userinteraction
-    fi
-
-    if [ ! -r "${INSTALL_DIR}/${updatePackage}" ]; then
-        logwarning "Main package $updatePackage is missing. Please copy it to $INSTALL_DIR and press [ENTER]."
-        read userinteraction
-    fi
-
-    unzip "$mainPackage" || return 1
-    unzip -o "$updatePackage" || return 1
-
-    mv "$mainPackage" "$TMP_DIR" || return 1
-    mv "$updatePackage" "$TMP_DIR" || return 1
-
-    runSetupScript || return 1
-
-    loginfo "Performing update to latest release..."
-    sudo ./controller -u admin -p admin -i 1 -m autoup -n v1.0.2
-}
-
-function installTrunk {
-    loginfo "Fetching developing version from SVN repository..."
-    cd "$INSTALL_DIR" || return 1
-    if [ -d ".svn" ]; then
-        logdebug "Performing update..."
-        svn update || return 1
-    else
-        logdebug "Performing checkout..."
-        svn co http://dev.synetics.de/svn/idoit/trunk . || return 1
-    fi
-
-    runSetupScript || return 1
-}
-
-function installStable {
-    loginfo "Fetching stable version from SVN repository..."
-    cd "$INSTALL_DIR" || return 1
-    if [ -d ".svn" ]; then
-        logdebug "Performing update..."
-        svn update || return 1
-    else
-        logdebug "Performing checkout..."
-        svn co http://dev.synetics.de/svn/idoit/branches/idoit-stable . || return 1
-    fi
-
-    runSetupScript || return 1
-}
-
-function runSetupScript {
-    loginfo "Running setup script..."
-    cd "${INSTALL_DIR}/setup" || return 1
-    {
-        echo "idoit_data"
-        echo "idoit_system"
-        echo "$HOST"
-        echo "$MARIADB_DBA_PASSWORD"
-        echo "Y"
-    } | ./install.sh || return 1
 }
 
 function importDemoDump {

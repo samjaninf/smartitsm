@@ -2,7 +2,7 @@
 
 
 ## smartITSM Demo System
-## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+## Copyright (C) 2014 synetics GmbH <http://www.smartitsm.org/>
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as
@@ -20,12 +20,11 @@
 
 ## OTRS
 
-OTRS_VERSION="3.3.6"
-
 MODULE="otrs"
 TITLE="Open-source Ticket Request System (OTRS)"
 DESCRIPTION="issue tracking system"
-VERSIONS="OTRS Help Desk $OTRS_VERSION, ReferenceIDoitObjects 0.6 (closed beta)"
+LATEST="3.3.6"
+VERSIONS="OTRS Help Desk $LATEST, ReferenceIDoitObjects 0.6 (closed beta)"
 URL="/otrs/index.pl"
 IT_STACK="http://www.smartitsm.org/it_stack/otrs"
 PRIORITY="50"
@@ -35,11 +34,11 @@ PRIORITY="50"
 function do_install {
     loginfo "Installing OTRS Help Desk..."
     cd "$TMP_DIR" || return 1
-    download http://ftp.otrs.org/pub/otrs/otrs-"$OTRS_VERSION".tar.bz2 || return 1
+    download http://ftp.otrs.org/pub/otrs/otrs-"$LATEST".tar.bz2 || return 1
     logdebug "Extracting tarball..."
-    tar xjf otrs-"$OTRS_VERSION".tar.bz2 || return 1
+    tar xjf otrs-"$LATEST".tar.bz2 || return 1
     logdebug "Moving files to destination directory..."
-    mv otrs-"$OTRS_VERSION"/ /opt/otrs/ || return 1
+    mv otrs-"$LATEST"/ /opt/otrs/ || return 1
     logdebug "Checking modules..."
     perl /opt/otrs/bin/otrs.CheckModules.pl || return 1
     logdebug "Adding system user..."

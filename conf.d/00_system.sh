@@ -2,7 +2,7 @@
 
 
 ## smartITSM Demo System
-## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+## Copyright (C) 2014 synetics GmbH <http://www.smartitsm.org/>
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as
@@ -104,6 +104,7 @@ html_errors = Off
 post_max_size = 128M
 upload_max_filesize = 128M
 session.gc_maxlifetime = 86400
+short_open_tag = On
 " > /etc/php5/apache2/conf.d/smartitsm.ini || return 1
 
     loginfo "Activating PHP's mcrypt extension..."

@@ -2,7 +2,7 @@
 
 
 ## smartITSM Demo System
-## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+## Copyright (C) 2014 synetics GmbH <http://www.smartitsm.org/>
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as
@@ -37,7 +37,7 @@ PRIORITY="50"
 ## Installs this module.
 function do_install {
     cd "$TMP_DIR" || return 1
-    
+
     loginfo "Installing OCS Inventory NG server..."
     wget https://launchpad.net/ocsinventory-server/stable-2.0/2.0.5/+download/OCSNG_UNIX_SERVER-2.0.5.tar.gz || return 1
     tar xzf OCSNG_UNIX_SERVER-2.0.5.tar.gz || return 1
@@ -131,20 +131,20 @@ function do_install {
         # Do you want to send an inventory of this machine?
         echo "y"
     } | make install || return 1
-    
+
     cd "$BASE_DIR" || return 1
-    
+
     do_www_install || return 1
-    
+
     return 0
 }
 
 ## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
-    
+
     fetchLogo "http://www.ocsinventory-ng.org/en/assets/components/modxss/images/logo.png"
-    
+
     loginfo "Installing module configuration..."
     echo "<?php
 
@@ -176,7 +176,7 @@ function do_www_install {
 
 ?>
 " > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
-    
+
     return 0
 }
 

@@ -2,7 +2,7 @@
 
 
 ## smartITSM Demo System
-## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+## Copyright (C) 2014 synetics GmbH <http://www.smartitsm.org/>
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as

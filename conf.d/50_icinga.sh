@@ -2,7 +2,7 @@
 
 
 ## smartITSM Demo System
-## Copyright (C) 2012 synetics GmbH <http://www.smartitsm.org/>
+## Copyright (C) 2014 synetics GmbH <http://www.smartitsm.org/>
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as
@@ -50,9 +50,9 @@ function do_install {
     installNagiosPlugins || return 1
 
     restartWebServer || return 1
-    
+
     do_www_install || return 1
-    
+
     return 0
 }
 
@@ -154,9 +154,9 @@ function installNagiosPlugins {
 ## Installs homepage configuration.
 function do_www_install {
     loginfo "Installing homepage configuration..."
-    
+
     fetchLogo "http://web.demo.icinga.org/icinga-web/images/icinga/icinga-logo-big.png"
-    
+
     loginfo "Installing module configuration..."
     echo "<?php
 
@@ -176,7 +176,7 @@ function do_www_install {
 
 ?>
 " > "${WWW_MODULE_DIR}/${PRIORITY}_${MODULE}.php" || return 1
-    
+
     return 0
 }
 

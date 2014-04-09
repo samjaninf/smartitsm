@@ -3,7 +3,7 @@ Debugger:
   DebugThreshold: debug
   TestMode: 0
 Description: Ticket Connector Sample
-FrameworkVersion: 3.1.x CVS
+FrameworkVersion: 3.3.x CVS
 Provider:
   Operation:
     SessionCreate:
