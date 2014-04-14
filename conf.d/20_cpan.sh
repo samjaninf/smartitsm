@@ -50,10 +50,12 @@ function do_install {
     installCPANmodule "Test::CPAN::Meta::JSON" || return 1
     installCPANmodule "Module::Install::AuthorTests" || return 1
     installCPANmodule "Module::Install::ExtraTests" || return 1
+    installCPANmodule "Module::Versions::Report" || return 1
     installCPANmodule "GD::Text" || return 1
     installCPANmodule "Moose" || return 1
     installCPANmodule "XML::Entities" || return 1
     installCPANmodule "XML::Simple" || return 1
+    installCPANmodule "XML::RSS" || return 1
     installCPANmodule "Compress::Zlib" || return 1
     installCPANmodule "DBI" || return 1
     installCPANmodule "Apache::DBI" || return 1
@@ -66,6 +68,7 @@ function do_install {
     installCPANmodule "Net::SMTP::TLS::ButMaintained" || return 1
     installCPANmodule "PDF::API2" || return 1
     installCPANmodule "Text::CSV_XS" || return 1
+    installCPANmodule "Text::Password::Pronounceable" || return 1
     installCPANmodule "LWP::UserAgent" || return 1
     installCPANmodule "Digest::MD5" || return 1
     # TODO skip external tests (network connectivity required), type ENTER:
@@ -81,6 +84,58 @@ function do_install {
     installCPANmodule "GD::Graph" || return 1
     installCPANmodule "Net::LDAP" || return 1
     installCPANmodule "Crypt::Eksblowfish::Bcrypt" || return 1
+    installCPANmodule "Time::ParseDate" || return 1
+    installCPANmodule "IPC::Run3" || return 1
+    installCPANmodule "Tree::Simple" || return 1
+    installCPANmodule "HTML::Scrubber" || return 1
+    installCPANmodule "HTML::Quoted" || return 1
+    installCPANmodule "HTML::Mason" || return 1
+    installCPANmodule "Symbol::Global::Name" || return 1
+    installCPANmodule "DateTime::Format::Natural" || return 1
+    installCPANmodule "Plack" || return 1
+    installCPANmodule "Text::Wrapper" || return 1
+    installCPANmodule "Regexp::Common::net::CIDR" || return 1
+    installCPANmodule "Log::Dispatch" || return 1
+    installCPANmodule "HTML::FormatText::WithLinks::AndTables" || return 1
+    installCPANmodule "DateTime" || return 1
+    installCPANmodule "CGI::Emulate::PSGI" || return 1
+    installCPANmodule "Text::Quoted" || return 1
+    installCPANmodule "Regexp::IPv6" || return 1
+    installCPANmodule "CSS::Squish" || return 1
+    installCPANmodule "DateTime::Locale" || return 1
+    installCPANmodule "CGI::PSGI" || return 1
+    installCPANmodule "Apache::Session" || return 1
+    installCPANmodule "Date::Extract" || return 1
+    installCPANmodule "HTML::Mason::PSGIHandler" || return 1
+    installCPANmodule "MIME::Entity" || return 1
+    installCPANmodule "Locale::Maketext::Lexicon" || return 1
+    installCPANmodule "Module::Refresh" || return 1
+    installCPANmodule "Role::Basic" || return 1
+    installCPANmodule "Date::Manip" || return 1
+    installCPANmodule "HTML::RewriteAttributes" || return 1
+    installCPANmodule "Text::Template" || return 1
+    installCPANmodule "Text::WikiFormat" || return 1
+    installCPANmodule "DBIx::SearchBuilder" || return 1
+    installCPANmodule "File::ShareDir" || return 1
+    installCPANmodule "Regexp::Common" || return 1
+    installCPANmodule "HTML::FormatText::WithLinks" || return 1
+    installCPANmodule "Locale::Maketext::Fuzzy" || return 1
+    installCPANmodule "Email::Address::List" || return 1
+    installCPANmodule "Net::CIDR" || return 1
+    installCPANmodule "UNIVERSAL::require" || return 1
+    installCPANmodule "Email::Address" || return 1
+    installCPANmodule "Plack::Handler::Starlet" || return 1
+    installCPANmodule "MIME::Types" || return 1
+    installCPANmodule "FCGI::ProcManager" || return 1
+    installCPANmodule "FCGI" || return 1
+    installCPANmodule "PerlIO::eol" || return 1
+    installCPANmodule "GnuPG::Interface" || return 1
+    installCPANmodule "GraphViz" || return 1
+    installCPANmodule "Data::ICal" || return 1
+    installCPANmodule "Mozilla::CA" || return 1
+    installCPANmodule "String::ShellQuote" || return 1
+    installCPANmodule "Crypt::X509" || return 1
+    installCPANmodule "Convert::Color" || return 1
 
     return 0
 }

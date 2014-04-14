@@ -153,7 +153,7 @@ function download {
 ##   $1 Space-separated list of modules
 function installCPANmodule {
     loginfo "Installing Perl module from CPAN..."
-    cpan -i -n "$1"
+    cpan -i -T "$1"
     local status="$?"
     if [ "$status" -gt 0 ]; then
         logerror "Installation of module '$1' from CPAN failed."

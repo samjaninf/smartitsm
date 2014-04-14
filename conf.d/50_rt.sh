@@ -24,7 +24,8 @@
 MODULE="rt"
 TITLE="Request Tracker (RT)"
 DESCRIPTION="issue tracking system"
-VERSIONS="Request Tracker (RT) 4.0.10, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
+LATEST="4.2.3"
+VERSIONS="Request Tracker (RT) ${LATEST}, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
 URL="/rt/"
 IT_STACK="http://www.smartitsm.org/it_stack/request_tracker"
 PRIORITY="50"
@@ -42,10 +43,10 @@ function do_install {
     cd "$TMP_DIR" || return 1
 
     loginfo "Installing RT..."
-    download "http://download.bestpractical.com/pub/rt/release/rt-4.0.10.tar.gz" || return 1
-    tar xzf rt-4.0.10.tar.gz || return 1
-    cd rt-4.0.10/ || return 1
-    ./configure --enable-graphviz --enable-gd --enable-gpg --enable-ssl-mailgate --with-db-dba="$MARIADB_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
+    download "http://download.bestpractical.com/pub/rt/release/rt-${LATEST}.tar.gz" || return 1
+    tar xzf rt-"${LATEST}".tar.gz || return 1
+    cd rt-"${LATEST}"/ || return 1
+    ./configure --enable-graphviz --enable-gd --enable-gpg --enable-smime --with-db-dba="$MARIADB_DBA_USERNAME" --with-db-rt-user="$RT_DB_USERNAME" --with-db-rt-pass="$RT_DB_PASSWORD" || return 1
     ## Dry run: Do not abort after this command:
     make testdeps
     make fixdeps || return 1
@@ -61,9 +62,10 @@ function do_install {
     cd .. || return 1
 
     installCPANmodule "RT::Authen::ExternalAuth" || return 1
-    installCPANmodule "RT::Condition::NotStartedInBusinessHours" || return 1
+    # TODO testing failed:
+    #installCPANmodule "RT::Condition::NotStartedInBusinessHours" || return 1
     # TODO testing failed...
-    cpan -f -i RT::Extension::LDAPImport || return 1
+    #cpan -f -i RT::Extension::LDAPImport || return 1
     installCPANmodule "RT::Extension::MandatoryFields" || return 1
 
     installCPANmodule "RT::Extension::ReferenceIDoitObjects" || return 1
@@ -84,7 +86,7 @@ function do_install {
 #
 # The converse is also true, if this file isn't valid perl, you're
 # going to run into trouble. To check your SiteConfig file, use
-# this comamnd:
+# this command:
 #
 #   perl -c /path/to/your/etc/RT_SiteConfig.pm
 #
@@ -97,25 +99,17 @@ Set(\$Timezone, 'Europe, Berlin');
 Set(\$OwnerEmail, 'mail@smartitsm.org');
 Set(\$WebDomain, '$HOST');
 
-## Database
-Set(\$DatabaseUser, '$RT_DB_USERNAME');
-Set(\$DatabasePassword, '$RT_DB_PASSWORD');
-
-# You must install Plugins on your own, this is only an example
-# of the correct syntax to use when activating them.
-# There should only be one @Plugins declaration in your config file.
-#Set(@Plugins,(qw(RT::Extension::QuickDelete RT::Extension::CommandByMail)));
-
-# TODO RT::Extension::LDAPImport RT::Authen::ExternalAuth
-Set(@Plugins, qw(
-    RT::Extension::MandatoryFields
-    RT::Extension::ReferenceIDoitObjects
-    RT::Condition::NotStartedInBusinessHours
-));
+#Plugin('RT::Extension::QuickDelete');
+#Plugin('RT::Extension::CommandByMail');
+#Plugin('RT::Extension::LDAPImport');
+#Plugin('RT::Authen::ExternalAuth');
+Plugin('RT::Extension::MandatoryFields');
+Plugin('RT::Extension::ReferenceIDoitObjects');
+#Plugin('RT::Condition::NotStartedInBusinessHours');
 
 ## Logging
 Set(\$LogToSyslog, undef);
-Set(\$LogToFile , 'info');
+Set(\$LogToFile, 'info');
 
 ## Little performance tweak
 Set(\$AutocompleteOwners, 1);
@@ -159,28 +153,11 @@ Set(%MandatoryFields, (
 " > /opt/rt4/etc/RT_SiteConfig.pm || return 1
 
     loginfo "Configuring Apache httpd configuration..."
-    echo "Alias /rt /opt/rt4/share/html
+    cp "$ETC_DIR"/rt.conf /etc/apache2/conf-available/rt.conf || return 1
+    a2enconf rt
 
-<Directory /opt/rt4/share/html>
-        AddDefaultCharset UTF-8
-</Directory>
-
-<Location /rt>
-        Order allow,deny
-        Allow from all
-
-        AddDefaultCharset UTF-8
-
-        SetHandler modperl
-        PerlResponseHandler Plack::Handler::Apache2
-        PerlSetVar psgi_app /opt/rt4/sbin/rt-server
-</Location>
-
-<Perl>
-        use Plack::Handler::Apache2;
-        Plack::Handler::Apache2->preload('/opt/rt4/sbin/rt-server');
-</Perl>
-" > /etc/apache2/conf.d/rt.conf || return 1
+    # TODO Set up cron jobs!
+    # TODO Configure mail gateway!
 
     loginfo "Performing clean restart..."
     "$BIN_DIR/rt_clean_cache_apache_restart.sh" || return 1

@@ -25,7 +25,7 @@ MODULE="idoit"
 TITLE="i-doit pro"
 DESCRIPTION="CMDB and IT documentation"
 LATEST="1.3"
-VERSIONS="i-doit pro $LATEST"
+VERSIONS="i-doit pro ${LATEST}"
 URL="/i-doit/"
 IT_STACK="http://www.smartitsm.org/it_stack/i-doit"
 PRIORITY="60"
@@ -65,9 +65,9 @@ function do_install {
         read userinteraction
     fi
 
-    unzip "$distribution" || return 1
+    cd "$INSTALL_DIR" || return 1
 
-    mv "$distribution" "$TMP_DIR" || return 1
+    unzip "$distribution" || return 1
 
     #loginfo "Running setup script..."
     #cd "${INSTALL_DIR}/setup" || return 1

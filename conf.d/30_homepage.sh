@@ -39,7 +39,8 @@ function do_www_install {
     cp -r "$WWW_DIR" "$SMARTITSM_ROOT_DIR" || return 1
     mkdir -p "$LOGO_DIR" || return 1
     mkdir -p "$WWW_MODULE_DIR" || return 1
-    cp "$ETC_DIR"/apache.conf /etc/apache2/conf.d/smartitsm.conf || return 1
+    cp "$ETC_DIR"/apache.conf /etc/apache2/conf-available/smartitsm_homepage.conf || return 1
+    a2enconf smartitsm_homepage
     restartWebServer || return 1
     return 0
 }
