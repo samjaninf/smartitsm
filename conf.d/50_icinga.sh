@@ -27,16 +27,17 @@
 ##   <http://docs.icinga.org/latest/en/plugins.html>
 ##
 ## ToDo
-## *   Switch to debian packages, e. g. ppa:formorer/icinga-web, nagios-plugins.
 ## *   Nagios Plugins: missing libs/bins for PostgreSQL, radius, mysql, lmstat, qmail-qstat.
 ## *   Replace user/group nagios/nagios with icinga/icinga.
+## *   Switch to Icinga 2
+## *   Switch to monitoring plugins
 
 
 MODULE="icinga"
 TITLE="Icinga"
 DESCRIPTION="network monitoring"
-VERSIONS="Icinga 1.8.4, Icinga-Web 1.8.2, IDOUtils 1.7.1, Nagios Plugins 1.4.16, PNP4Nagios 0.6.19"
-URL="/icinga/"
+VERSIONS="Icinga 1.11.5, Icinga-Web 1.10.0, IDOUtils 1.7.1, Nagios Plugins 2.0.3, PNP4Nagios 0.6.19"
+URL="/icinga/".
 IT_STACK="http://www.smartitsm.org/it_stack/icinga"
 PRIORITY="50"
 
@@ -143,9 +144,9 @@ function installNagiosPlugins {
     loginfo "Installing Nagios Plugins..."
     installPackage "qstat fping libldap-2.4-2 snmp libsnmp-dev libnet-snmp-perl snmp-mibs-downloader"
     cd "$TMP_DIR" || return 1
-    download "http://downloads.sourceforge.net/project/nagiosplug/nagiosplug/1.4.16/nagios-plugins-1.4.16.tar.gz" || return 1
-    tar xzf nagios-plugins-1.4.16.tar.gz || return 1
-    cd nagios-plugins-1.4.16/ || return 1
+    download "http://www.nagios-plugins.org/download/nagios-plugins-2.0.3.tar.gz" || return 1
+    tar xzf nagios-plugins-2.0.3.tar.gz || return 1
+    cd nagios-plugins-2.0.3/ || return 1
     ./configure --prefix=/usr/share/icinga --with-cgiurl=/icinga/cgi-bin --with-nagios-user=nagios --with-nagios-group=nagios
     make || return 1
     make install || return 1
