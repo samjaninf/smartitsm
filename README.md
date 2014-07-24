@@ -22,7 +22,7 @@ Each tool is encapsulated in a module. Currently, the demo system supports the f
 
 ##  Requirements
 
-*   Ubuntu 13.10
+*   Ubuntu 14.04 LTS
 *   Super user (`root`) rights
 
 

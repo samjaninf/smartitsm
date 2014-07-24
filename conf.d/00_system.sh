@@ -44,8 +44,8 @@ function do_install {
         logwarning "lsb_release is not available or returned with an error."
         return 1
     fi
-    if [ "$release" != "13.10" ]; then
-        logwarning "Distribution Ubuntu 13.10 is required."
+    if [ "$release" != "14.04" ]; then
+        logwarning "Distribution Ubuntu 14.04 LTS is required."
         return 1
     fi
 
