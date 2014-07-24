@@ -13,11 +13,11 @@ The demo system is part of our _smartITSM_ initiative. The initiative stands for
 
 Each tool is encapsulated in a module. Currently, the demo system supports the following tools:
 
-*   **i-doit** v1.3 pro
-*   **Icinga** 1.7.1, Icinga-Web 1.7.2, IDOUtils 1.7.1, Nagios Plugins 1.4.15, PNP4Nagios 0.6.18
+*   **i-doit** v1.4 pro
+*   **Icinga** 1.11.5, Icinga-Web 1.10.0, IDOUtils 1.7.1, Nagios Plugins 2.0.3, PNP4Nagios 0.6.18
 *   **OCS Inventory NG** 2.0.5, OCS Inventory NG Unix Agent 2.0.5
-*   **OTRS Help Desk** 3.3.6, ReferenceIDoitObjects 0.6 (closed beta)
-*   **Request Tracker (RT)** 4.0.7, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects
+*   **OTRS Help Desk** 3.3.8, ReferenceIDoitObjects 0.7 (closed beta)
+*   **Request Tracker (RT)** 4.3.6, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects
 
 
 ##  Requirements
