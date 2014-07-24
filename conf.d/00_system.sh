@@ -66,7 +66,7 @@ function do_install {
     # TODO Doesn't work:
     loginfo "Installing MariaDB..."
     apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-    add-apt-repository -y 'deb http://mirrors.n-ix.net/mariadb/repo/10.0/ubuntu saucy main'
+    add-apt-repository -y 'deb http://mirror2.hs-esslingen.de/mariadb/repo/10.1/ubuntu trusty main'
     apt-get update -y
     {
         echo "$MARIADB_DBA_PASSWORD"
