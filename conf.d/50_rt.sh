@@ -159,7 +159,7 @@ Set(%MandatoryFields, (
     # TODO Configure mail gateway!
 
     loginfo "Performing clean restart..."
-    "$BIN_DIR/rt_clean_cache_apache_restart.sh" || return 1
+    "$BIN_DIR/rt_clean_cache_apache_restart" || return 1
 
     do_www_install || return 1
 
