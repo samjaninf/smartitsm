@@ -23,8 +23,9 @@
 MODULE="otrs"
 TITLE="Open-source Ticket Request System (OTRS)"
 DESCRIPTION="issue tracking system"
-LATEST="3.3.8"
-VERSIONS="OTRS Help Desk ${LATEST}, ReferenceIDoitObjects 0.7 (closed beta)"
+LATEST="3.3.9"
+LATEST_REFIDOITOBJ="0.8"
+VERSIONS="OTRS Help Desk ${LATEST}, ReferenceIDoitObjects ${LATEST_REFIDOITOBJ}"
 URL="/otrs/index.pl"
 IT_STACK="http://www.smartitsm.org/it_stack/otrs"
 PRIORITY="50"
@@ -96,21 +97,14 @@ function do_install {
     return 0
 }
 
-# TODO Change requirements from 3.1.x to 3.2.x!
 function installReferenceIDoitObjects {
     loginfo "Installing OTRS-Extension-ReferenceIDoitObjects..."
     cd "$TMP_DIR" || return 1
-    local tarball="OTRS-Extension-ReferenceIDoitObjects-0.7.tar.gz"
-    if [ ! -r "$TMP_DIR/$tarball" ]; then
-        lognotice "Please copy $tarball to $TMP_DIR and press [ENTER]. To skip the installation just ignore this."
-        read userinteraction
-    fi
-    if [ -r "$TMP_DIR/$tarball" ]; then
-        tar xzf "$tarball" || return 1
-        /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-0.7/ReferenceIDoitObjects-0.7.opm || return 1
-        restartWebServer || return 1
-        # TODO configure extension, add and configure dynamic fields
-    fi
+    download http://opar.perl-services.de/package/download/682 || return 1
+    mv 682 ReferenceIDoitObjects-"$LATEST_REFIDOITOBJ".opm
+    /opt/otrs/bin/otrs.PackageManager.pl -a install -p ReferenceIDoitObjects-"$LATEST_REFIDOITOBJ".opm || return 1
+    restartWebServer || return 1
+    # TODO configure extension, add and configure dynamic fields
 }
 
 ## Installs homepage configuration.
