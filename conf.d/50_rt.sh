@@ -24,7 +24,7 @@
 MODULE="rt"
 TITLE="Request Tracker (RT)"
 DESCRIPTION="issue tracking system"
-LATEST="4.2.6"
+LATEST="4.2.7"
 VERSIONS="Request Tracker (RT) ${LATEST}, RT::Authen::ExternalAuth, RT::Condition::NotStartedInBusinessHours, RT::Extension::LDAPImport, RT::Extension::MandatoryFields, RT::Extension::ReferenceIDoitObjects"
 URL="/rt/"
 IT_STACK="http://www.smartitsm.org/it_stack/request_tracker"
