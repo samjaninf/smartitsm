@@ -91,13 +91,13 @@ function do_install {
     loginfo "Tweaking PHP configuration for Apache httpd..."
     echo "max_execution_time = 300
 max_input_time = 60
-memory_limit = 1024M
+memory_limit = 256M
 error_reporting = E_ALL & ~E_DEPRECATED
 display_errors = Off
 log_errors = On
 html_errors = Off
-post_max_size = 128M
-upload_max_filesize = 128M
+post_max_size = 32M
+upload_max_filesize = 32M
 session.gc_maxlifetime = 86400
 short_open_tag = On
 " > /etc/php5/apache2/conf.d/smartitsm.ini || return 1
