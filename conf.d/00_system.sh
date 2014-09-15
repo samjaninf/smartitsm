@@ -77,12 +77,7 @@ function do_install {
     installPackage mariadb-server mariadb-client || return 1
 
     loginfo "Tweaking MariaDB server configuration..."
-    echo "[mysqld]
-key_buffer_size=64M
-table_open_cache=1024
-sort_buffer_size=4M
-read_buffer_size=1M
-" > /etc/mysql/conf.d/smartitsm.cnf || return 1
+    cp "$ETC_DIR"/smartitsm.cnf /etc/mysql/conf.d/smartitsm.cnf || return 1
     service mysql restart || return 1
 
     loginfo "Removing unnecessary MariaDB users..."
